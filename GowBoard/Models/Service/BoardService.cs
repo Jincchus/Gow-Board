@@ -103,7 +103,11 @@ namespace GowBoard.Models.Service
                         Nickname = b.Writer.Nickname
                     },
                     CreatedAt = b.CreatedAt,
-                    BoardFileIds = b.BoardFiles.Select(f => f.BoardFileId).ToList()
+                    BoardFiles = b.BoardFiles.Select(f => new ResFileResult
+                    {
+                        BoardFileId = f.BoardFileId,
+                        FileName = f.OriginFileName
+                    }).ToList()
                 })
                 .FirstOrDefault();
 
@@ -121,7 +125,7 @@ namespace GowBoard.Models.Service
                 Writer = boardContentData.Writer,
                 Category = boardContentData.Category,
                 CreatedAt = boardContentData.CreatedAt,
-                BoardFileIds = boardContentData.BoardFileIds
+                BoardFiles = boardContentData.BoardFiles
             };
 
             return boardContent;

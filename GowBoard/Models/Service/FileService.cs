@@ -26,42 +26,66 @@ namespace GowBoard.Models.Service
             if (file == null || file.ContentLength == 0)
                 throw new ArgumentException("파일이 존재하지 않습니다");
 
-            int boardFileId = await GetSequenceAsync();
-            string originFileName = Path.GetFileName(file.FileName);
-            string saveFileName = Guid.NewGuid().ToString();
-            int fileSize = file.ContentLength;
-            string extension = Path.GetExtension(file.FileName);
-
-            var boardFile = new BoardFile
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                BoardFileId = boardFileId,
-                FileSize = fileSize,
-                Extension = extension,
-                OriginFileName = originFileName,
-                SaveFileName = saveFileName,
-                CreatedAt = DateTime.Now,
-            };
+                string filePath = null;
+                string thumbFilePath = null;
 
-            await AddFileAsync(boardFile);
+                try
+                {
+                    string originFileName = Path.GetFileName(file.FileName);
+                    string saveFileName = Guid.NewGuid().ToString();
+                    int fileSize = file.ContentLength;
+                    string extension = Path.GetExtension(file.FileName);
 
-            string filePath = Path.Combine(HttpContext.Current.Server.MapPath("~/Uploads"), saveFileName + extension);
+                    var boardFile = new BoardFile
+                    {
+                        FileSize = fileSize,
+                        Extension = extension,
+                        OriginFileName = originFileName,
+                        SaveFileName = saveFileName,
+                        CreatedAt = DateTime.Now,
+                    };
 
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.InputStream.CopyToAsync(fileStream);
+                    _context.BoardFiles.Add(boardFile);
+                    await _context.SaveChangesAsync();
+
+                    int boardFileId = boardFile.BoardFileId;
+
+                    filePath = Path.Combine(HttpContext.Current.Server.MapPath("~/Uploads"), saveFileName + extension);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.InputStream.CopyToAsync(fileStream);
+                    }
+
+                    file.SaveAs(filePath);
+
+                    if (IsImageFile(extension))
+                    {
+                        string thumbFileName = saveFileName + "Thumb" + extension;
+                        thumbFilePath = Path.Combine(HttpContext.Current.Server.MapPath("~/Uploads/Thumbnail"), thumbFileName);
+                        using (var image = Image.FromFile(filePath))
+                        using (var thumbnail = image.GetThumbnailImage(100, 100, () => false, IntPtr.Zero))
+                        {
+                            thumbnail.Save(thumbFilePath);
+                        }
+                    }
+
+                    transaction.Commit();
+                    return boardFileId;
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
             }
-
-            file.SaveAs(filePath);
-
-            string thumbFileName = saveFileName + "Thumb" + extension;
-            string thumbFilePath = Path.Combine(HttpContext.Current.Server.MapPath("~/Uploads/Thumbnail"), thumbFileName);
-            using (var image = Image.FromFile(filePath))
-            using (var thumbnail = image.GetThumbnailImage(100, 100, () => false, IntPtr.Zero))
-            {
-                thumbnail.Save(thumbFilePath);
-            }
-
-            return boardFileId;
+        }
+        private bool IsImageFile(string extension)
+        {
+            string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff" };
+            return imageExtensions.Contains(extension.ToLower());
         }
 
         public async Task<int> GetSequenceAsync()

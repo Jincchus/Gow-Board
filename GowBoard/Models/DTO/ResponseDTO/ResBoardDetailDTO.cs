@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GowBoard.Models.DTO.RequestDTO;
+using System;
 using System.Collections.Generic;
 
 namespace GowBoard.Models.DTO.ResponseDTO
@@ -11,7 +12,7 @@ namespace GowBoard.Models.DTO.ResponseDTO
         public string Content { get; set; }
         public ResWriterDTO Writer { get; set; }
         public DateTime CreatedAt { get; set; }
-        public List<int> BoardFileIds { get; set; }
+        public List<ResFileResult> BoardFiles { get; set; }
 
         public string FormattedCreatedAt
         {

@@ -27,9 +27,15 @@
                     <div id="editor"></div>
                 </form>
 
+                <div class="form-group mt-3">
+                    <label for="file-upload">첨부파일</label>
+                    <input type="file" id="file-upload" name="file-upload" multiple>
+                </div>
+                <div id="file-list" class="mt-3"></div>
+
                 <div class="text-md-end mt-5">
                     <button type="submit" id="" class="text-md-end cancel-btn">취소</button>
-                    <button type="button" id="create-board-ajax-btn" class="text-md-end ajax-btn">글등록</button>
+                    <button type="button" id="update-board-ajax-btn" class="text-md-end ajax-btn">수정</button>
                 </div>
             </div><!-- End table -->
 
@@ -50,10 +56,12 @@
 </script>
 <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js'></script>
 <script>
+    let boardFileIds = [];
+    let boardImageIds = [];
+    const fileList = document.getElementById('file-list');
+    const maxFileSize = 20 * 1024 * 1024;
 
     const cancelBtn = document.querySelector(".cancel-btn");
-    var boardFileId = [];
-    console.log(boardFileId);
     cancelBtn.addEventListener("click", function () {
         if (confirm("입력된 글이 모두 사라집니다. 리스트로 돌아가시겠습니까?")) {
             window.location.href = "/Board/List?category=" + category;
@@ -61,138 +69,185 @@
     });
 
     var editor = new FroalaEditor('#editor', {
+        toolbarButtons: {
+            'moreText': {
+                'buttons': ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', 'textColor', 'backgroundColor', 'inlineClass', 'inlineStyle', 'clearFormatting']
+            },
+            'moreParagraph': {
+                'buttons': ['alignLeft', 'alignCenter', 'formatOLSimple', 'alignRight', 'alignJustify', 'formatOL', 'formatUL', 'paragraphFormat', 'paragraphStyle', 'lineHeight', 'outdent', 'indent', 'quote']
+            },
+            'moreRich': {
+                'buttons': ['emoticons', 'insertImage', 'insertTable', 'insertLink', 'fontAwesome', 'specialCharacters', 'embedly', 'insertHR']
+            },
+            'moreMisc': {
+                'buttons': ['undo', 'redo', 'fullscreen', 'print', 'getPDF', 'spellChecker', 'selectAll', 'html', 'help']
+            }
+        },
         heightMin: 500,
         heightMax: 500,
         imageUploadURL: '/Board/BoardFileCreate',
         imageUploadMethod: 'POST',
-        fileUploadURL: '/Board/BoardFileCreate',
-        fileUploadMethod: 'POST',
+        htmlAllowedTags: ['.*'],
+        htmlAllowedAttrs: ['.*'],
+        htmlRemoveTags: ['script'],
+        pastePlain: false,
+        htmlExecuteScripts: false,
+        entities: '',
+        htmlDoNotWrapTags: ['br', 'hr'],
+        htmlUntouched: true,
+        useClasses: false,
         events: {
             'image.uploaded': function (response) {
                 var resObj = JSON.parse(response);
-                boardFileId.push(resObj.boardFileId);
-                console.log("Image uploaded, boardFileId:", boardFileId);
+                boardImageIds.push(resObj.boardFileId);
             },
-            'image.removed': function ($img) {
-                var src = $img.attr('src');
-                var boardFileId = extractBoardFileIdFromSrc(src);
-                fetch('/Board/RemoveFile', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ boardFileId: boardFileId })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            if (Array.isArray(boardFileId)) {
-                                boardFileId = boardFileId.filter(id => id !== fileId);
-                            }
-                            console.log("Image removed, updated boardFileId:", boardFileId);
-                        } else {
-                            alert("이미지 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
-                        }
-                    })
-                    .catch(error => {
-                        console.error(error);
-                        alert("이미지 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
+            'image.removed': async function ($img) {
+                const boardFileIdToRemove = $img.attr('boardfileid');
+
+                try {
+                    const response = await fetch('/Board/RemoveFile', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ boardFileId: boardFileIdToRemove })
                     });
+
+                    const result = await response.json();
+
+                    if (!result.success) {
+                        throw new Error(result.message || '이미지 삭제 중 오류가 발생했습니다.');
+                    }
+                    console.log("이미지 삭제 완료");
+
+                    boardImageIds = boardImageIds.filter(id => id !== boardFileIdToRemove);
+
+                } catch (error) {
+                    console.error(error);
+                    alert(`이미지 삭제 중 오류가 발생했습니다.${error.message}`);
+                }
             },
             'image.error': function (error) {
                 console.error(error);
                 alert("이미지 업로드 중 오류가 발생했습니다. 다시 시도해주세요.");
-            },
-            'file.uploaded': function (response) {
-                var resObj = JSON.parse(response);
-                boardFileId.push(resObj.boardFileId);
-            },
-            'file.unlink': function (link) {
-                var boardFileId = extractBoardFileIdFromUrl(link);
-                fetch('/Board/RemoveFile', {
+            }
+        }
+    });
+
+
+    const fileUpload = document.getElementById('file-upload');
+
+    fileUpload.addEventListener('change', async function (event) {
+        const files = event.target.files;
+        for (let file of files) {
+            if (file.size > maxFileSize) {
+                alert('20MB이상 크기의 파일을 첨부 할 수 없습니다.');
+                continue;
+            }
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const response = await fetch('/Board/BoardFileCreate', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || '파일 업로드 실패');
+                }
+
+                const result = await response.json();
+
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <span>${file.name}</span>
+                    <button type="button" class="remove-file" data-id="${result.boardFileId}">X</button>
+                `;
+                fileList.appendChild(fileItem);
+                boardFileIds.push(result.boardFileId);
+
+            } catch (error) {
+                console.error('파일 업로드 중 오류:', error);
+                alert('파일 업로드 중 오류가 발생했습니다.');
+            }
+        }
+        fileUpload.value = '';
+    });
+
+    fileList.addEventListener('click', async function (event) {
+        if (event.target.classList.contains('remove-file')) {
+            const boardFileIdToRemove = event.target.getAttribute('data-id');
+            try {
+                const response = await fetch('/Board/RemoveFile', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ boardFileId: boardFileId })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            boardFileId = boardFileId.filter(id => id !== fileId);
-                            console.log("File unlinked, updated boardFileId:", boardFileId); // 확인을 위한 로그 출력
-                        } else {
-                            alert("파일 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
-                        }
+                    body: JSON.stringify({ boardFileId: boardFileIdToRemove })
+                });
 
-                    })
-                    .catch(error => {
-                        console.error(error);
-                        alert("파일 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
-                    });
-            },
-            'file.error': function (error) {
-                console.error(error);
-                alert("파일 업로드 중 오류가 발생했습니다. 다시 시도해주세요.");
-            },
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || '파일 삭제 실패');
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    event.target.closest('.file-item').remove();
+                    boardFileIds = boardFileIds.filter(id => id !== boardFileIdToRemove);
+                } else {
+                    throw new Error(result.message || '파일 삭제 실패');
+                }
+            } catch (error) {
+                console.error('파일 삭제 중 오류:', error);
+                alert('파일 삭제 중 오류가 발생했습니다: ' + error.message);
+            }
         }
     });
 
-    // file link의 boardFileId 가공 함수
-    function extractBoardFileIdFromUrl(link) {
-        var url = new URL(link);
-        var searchParams = new URLSearchParams(url.search);
-        var boardFileId = searchParams.get('BoardFileId');
-        return boardFileId;
-    }
-
-    function extractBoardFileIdFromSrc(src) {
-        var url = new URL(src);
-        var searchParams = new URLSearchParams(url.search);
-        var fileId = searchParams.get('BoardFileId');
-        return fileId;
-    }
-
-    const createBoardBtn = document.querySelector("#create-board-ajax-btn");
-    createBoardBtn.addEventListener("click", function () {
-        if (!confirm("게시글을 등록하시겠습니까?")) {
+    const updateBoardBtn = document.querySelector("#update-board-ajax-btn");
+    updateBoardBtn.addEventListener("click", function () {
+        if (!confirm("게시글을 수정하시겠습니까?")) {
             return;
         }
 
-        const title = document.querySelector("#Title")
-        const content = editor.el.innerHTML;
+        const title = document.querySelector("#Title");
+        const content = editor.html.get();
         const contentText = editor.html.get().replace(/<p><br><\/p>/g, '').trim();
 
         if (title.value.trim() === "") {
             alert("제목을 입력해주세요");
-
-            title.focus()
+            title.focus();
             return;
         }
 
-        if (contentText == "") {
+        if (contentText === "") {
             alert("내용을 입력해주세요");
-
-            editor.events.focus()
+            editor.events.focus();
             return;
-
         }
+
         let formData = new FormData();
-        formData.append('Title', document.querySelector("#Title").value);
+        formData.append('Title', title.value);
         formData.append('Content', content);
 
-        console.log("Appending boardFileId to formData:", boardFileId); // 디버깅을 위한 로그 출력
+        boardFileIds.forEach(fileId => {
+            formData.append('BoardFileId[]', fileId);
+        });
 
-        for (let i = 0; i < boardFileId.length; i++) {
-            formData.append('BoardFileId[]', boardFileId[i]);
-            console.log(`Appended boardFileId[${i}]:`, boardFileId[i]); // 각 파일 ID를 추가할 때 로그 출력
+        for (let i = 0; i < boardImageIds.length; i++) {
+            formData.append('BoardFileId[]', boardImageIds[i]);
         }
 
         fetch('/Board/Update/' + boardContentId, {
             method: "POST",
             body: formData
         })
-            .then((response) => {
+            .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -207,10 +262,9 @@
                 }
             })
             .catch(error => {
-                alert('전송 오류 : ' + error.message)
-            })
+                alert('전송 오류 : ' + error.message);
+            });
     });
-
 
     function editorCall(boardContentId) {
         fetch(`/Board/UpdateData/${boardContentId}`)
@@ -219,8 +273,22 @@
                 if (data.success) {
                     document.querySelector('#Title').value = data.title;
                     editor.html.set(data.content);
-                    boardFileId = data.fileIds || boardFileId;
-                    console.log("boardFileId = " + boardFileId)
+                    boardFileIds = data.boardFiles.map(file => file.id) || [];
+                    console.log("boardFileIds = ", boardFileIds);
+
+                    // 기존 파일 목록 표시
+                    if (fileList) {
+                        fileList.innerHTML = ''; // 기존 목록 초기화
+                        data.boardFiles.forEach(file => {
+                            const fileItem = document.createElement('div');
+                            fileItem.className = 'file-item';
+                            fileItem.innerHTML = `
+                        <span>${file.name}</span> 
+                        <button type="button" class="remove-file" data-id="${file.id}">X</button>
+                    `;
+                            fileList.appendChild(fileItem);
+                        });
+                    }
                 } else {
                     alert(data.message);
                 }
@@ -230,7 +298,49 @@
             });
     }
 
+    document.addEventListener('DOMContentLoaded', function () {
+        const fileList = document.querySelector('#file-list'); // fileList 요소를 DOM에서 가져옴
+        if (fileList) {
+            fileList.addEventListener('click', async function (event) {
+                if (event.target.classList.contains('remove-file') && !isDeleting) {
+                    event.stopPropagation(); 
+                    isDeleting = true;
+                    const boardFileIdToRemove = event.target.getAttribute('data-id');
+                    try {
+                        const response = await fetch('/Board/RemoveFile', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ boardFileId: boardFileIdToRemove })
+                        });
 
-    editorCall(boardContentId);
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.message || '파일 삭제 실패');
+                        }
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            event.target.closest('.file-item').remove();
+                            boardFileIds = boardFileIds.filter(id => id !== boardFileIdToRemove);
+                        } else {
+                            throw new Error(result.message || '파일 삭제 실패');
+                        }
+                    } catch (error) {
+                        console.error('파일 삭제 중 오류:', error);
+                        alert('파일 삭제 중 오류가 발생했습니다: ' + error.message);
+                    } finally {
+                        isDeleting = false;
+                    }
+                }
+            });
+        } else {
+            console.warn('#file-list 요소를 찾을 수 없습니다.');
+        }
+        editorCall(boardContentId);
+    });
+
 
 </script>

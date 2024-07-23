@@ -22,35 +22,60 @@
                         <!-- ======= Single Post Content ======= -->
 
                         <h1 class="mt-5">@Model.BoardContent.Title</h1>            <div class="single-post">
-                            <div class="post-meta mb-5">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <span class="date">@Model.BoardContent.Writer.Nickname</span>
-                                        <span class="mx-1">|</span>
-                                        <i class="bi bi-calendar"></i>
-                                        <span> @Model.BoardContent.FormattedCreatedAt</span>
-                                    </div>
-                                    @if (Model.MemberInfoOrRole.Member != null &&
-                                        (Model.MemberInfoOrRole.Member.MemberId == Model.BoardContent.Writer.MemberId ||
-                                        (Model.MemberInfoOrRole.Role != null && Model.MemberInfoOrRole.Role.RoleName == "admin")))
-                                    {
-                                        <div class="col-6 text-md-end">
-                                            <a href="@Url.Action("Update", "Board", new { area = "", id = Model.BoardContent.BoardContentId })">수정</a>
-                                            <span class="mx-1">&bullet;</span>
-                                            <a href="@Url.Action("Delete", "Board", new { area = "", id = Model.BoardContent.BoardContentId })" id="content-delete-link">삭제</a>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="col-6 text-md-end">
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                            <div style="min-height:500px;">
-                                @Html.Raw(Model.BoardContent.Content)
-                            </div>
-                        </div><!-- End Single Post Content -->
+    <div class="post-meta mb-5">
+        <div class="row">
+            <div class="col-6">
+                <span class="date">@Model.BoardContent.Writer.Nickname</span>
+                <span class="mx-1">|</span>
+                <i class="bi bi-calendar"></i>
+                <span> @Model.BoardContent.FormattedCreatedAt</span>
+            </div>
+            @if (Model.MemberInfoOrRole.Member != null &&
+                (Model.MemberInfoOrRole.Member.MemberId == Model.BoardContent.Writer.MemberId ||
+                (Model.MemberInfoOrRole.Role != null && Model.MemberInfoOrRole.Role.RoleName == "admin")))
+            {
+                <div class="col-6 text-md-end">
+                    <a href="@Url.Action("Update", "Board", new { area = "", id = Model.BoardContent.BoardContentId })">수정</a>
+                    <span class="mx-1">&bullet;</span>
+                    <a href="@Url.Action("Delete", "Board", new { area = "", id = Model.BoardContent.BoardContentId })" id="content-delete-link">삭제</a>
+                </div>
+            }
+            else
+            {
+                <div class="col-6 text-md-end">
+                </div>
+            }
+        </div>
+    </div>
+    <div style="min-height:300px;">
+        @Html.Raw(Model.BoardContent.Content)
+    </div>
+
+    <div class="card" >
+        <div class="card-header">
+            첨부파일
+        </div>
+        <ul class="list-group list-group-flush">
+            @if (Model.boardFiles != null && Model.boardFiles.Any())
+            {
+                foreach (var file in Model.boardFiles)
+                {
+                    <li class="list-group-item">
+                        <a href="@Url.Action("DownloadFile", "Board", new { boardFileId = file.BoardFileId })" target="_blank" data-id="@file.BoardFileId">
+                            @file.FileName
+                        </a>
+                    </li>
+                }
+            }
+            else
+            {
+                <li class="list-group-item">
+                    첨부파일이 없습니다.
+                </li>
+            }
+        </ul>
+    </div>
+</div><!-- End Single Post Content -->
 
                         @if (Model.BoardContent.Category != "Notice") 
                         {

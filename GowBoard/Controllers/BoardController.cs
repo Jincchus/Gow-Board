@@ -1,8 +1,12 @@
 ﻿using GowBoard.Models.DTO.RequestDTO;
 using GowBoard.Models.DTO.ResponseDTO;
+using GowBoard.Models.Entity;
 using GowBoard.Models.Service.Interface;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
@@ -100,6 +104,12 @@ namespace GowBoard.Controllers
         {
             if (file != null && file.ContentLength > 0)
             {
+                const int maxFileSize = 20 * 1024 * 1024; // 20MB in bytes
+                if (file.ContentLength > maxFileSize)
+                {
+                    return Json(new { success = false, message = "20MB이상 크기의 파일을 첨부 할 수 없습니다." });
+                }
+
                 try
                 {
                     int boardFileId = await _fileService.CreateFileAsync(file);
@@ -111,20 +121,14 @@ namespace GowBoard.Controllers
                         link = downloadLink
                     };
 
-                    string jsonResponse = JsonConvert.SerializeObject(response);
-
-
-                    ViewBag.BoardFileId = boardFileId;
-                    return Content(jsonResponse, "application/json");
+                    return Json(response, "application/json");
 
                 }
                 catch (Exception ex)
                 {
                     return Json(new { success = false, message = ex.Message });
                 }
-            };
-
-            // 파일이 제출되지 않은 경우
+            }
             return Json(new { success = false, message = "파일을 선택하세요." });
         }
 
@@ -210,14 +214,14 @@ namespace GowBoard.Controllers
 
         // GET: Board/DetailView/(id)
         // 게시판 디테일 뷰 페이지
-        public ActionResult DetailView(int? id)
+        public async Task<ActionResult> DetailView(int? id)
         {
             string memberId = Session["MemberId"]?.ToString();
             var member = memberId != null ? _memberService.GetMemberById(memberId) : null;
             var role = memberId != null ? _memberService.GetRoleByMemberId(memberId) : null;
 
             var boardContent = _boardService.GetBoardContentById(id.Value);
-            var boardComments = _commentService.GetBoardCommentListByContentId(id.Value);
+            var boardComments =  _commentService.GetBoardCommentListByContentId(id.Value);
             var totalCommentCount = _commentService.GetTotalCommentCount(id.Value);
 
             if (boardContent == null)
@@ -226,6 +230,21 @@ namespace GowBoard.Controllers
             }
 
             _boardService.UpdateViewCount(id.Value);
+
+            var boardFiles = new List<ResFileResult>();
+            var fileIds = boardContent.BoardFiles; // Assuming this property exists and contains a list of file IDs
+            foreach (var fileId in fileIds)
+            {
+                var file = await _fileService.GetFileByIdAsync(fileId.BoardFileId);
+                if (file != null)
+                {
+                    boardFiles.Add(new ResFileResult
+                    {
+                        FileName = file.OriginFileName,
+                        BoardFileId = file.BoardFileId
+                    });
+                }
+            }
 
             var viewModel = new ResBoardDetailAndMemberInfo
             {
@@ -236,7 +255,8 @@ namespace GowBoard.Controllers
                     Role = role
                 },
                 Comments = boardComments,
-                TotalCommentCount = totalCommentCount
+                TotalCommentCount = totalCommentCount,
+                boardFiles = boardFiles
             };
 
             return View(viewModel);
@@ -266,7 +286,7 @@ namespace GowBoard.Controllers
                         title = boardContent.Title,
                         content = boardContent.Content,
                         category = boardContent.Category,
-                        fileIds = boardContent.BoardFileIds
+                        boardFiles = boardContent.BoardFiles.Select(f => new { id = f.BoardFileId, name = f.FileName })
                     }, JsonRequestBehavior.AllowGet);
                 }
                 return Json(new { success = false, message = "해당 글에 관한 권한이 없습니다." }, JsonRequestBehavior.AllowGet);
@@ -377,7 +397,7 @@ namespace GowBoard.Controllers
                 else
                 {
                     return Json(new { success = false, messsage = "파일을 찾을 수 없거나 이미 삭제된 파일입니다." });
-                }
+                } 
             }
             catch (Exception ex)
             {

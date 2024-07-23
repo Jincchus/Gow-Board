@@ -14,5 +14,6 @@ namespace GowBoard.Models.Service.Interface
         Task<ResFileResult> DownloadFileAsync(int boardFileId);
         Task UpdateFileId(BoardFile boardFile);
         Task<bool> RemoveFileAsync(int boardFileId);
+        Task<BoardFile> GetFileByIdAsync(int boardFileId);
     }
 }
