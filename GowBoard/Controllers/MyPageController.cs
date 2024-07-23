@@ -139,9 +139,6 @@ namespace GowBoard.Controllers
         [HttpPost]
         public ActionResult Withdrawal(string password)
         {
-            // TODO: 현재 SOFT DELETE 처리이기때문에 member_role_map 에 정보가 남아있음
-            // 추후 member_role_map 테이블에 status 컬럼을 추가해 '탈퇴진행중' 등의 정보를 update 해줄 예정
-
             string memberId = Session["MemberId"].ToString();
             bool isValidCredentials = _memberService.VerifyCredentials(memberId, password);
 

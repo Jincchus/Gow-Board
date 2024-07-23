@@ -2,16 +2,13 @@
 using GowBoard.Models.DTO.RequestDTO;
 using GowBoard.Models.Entity;
 using GowBoard.Models.Service.Interface;
-using Microsoft.Ajax.Utilities;
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.Mvc;
 
 namespace GowBoard.Models.Service
 {
@@ -47,7 +44,7 @@ namespace GowBoard.Models.Service
 
             await AddFileAsync(boardFile);
 
-            string filePath = Path.Combine(HttpContext.Current.Server.MapPath("~/Uploads"), saveFileName+extension);
+            string filePath = Path.Combine(HttpContext.Current.Server.MapPath("~/Uploads"), saveFileName + extension);
             file.SaveAs(filePath);
 
             string thumbFileName = saveFileName + "Thumb" + extension;
@@ -79,7 +76,7 @@ namespace GowBoard.Models.Service
                 return null;
             }
 
-            string filePath = Path.Combine(HttpContext.Current.Server.MapPath("~/Uploads"), file.SaveFileName+file.Extension);
+            string filePath = Path.Combine(HttpContext.Current.Server.MapPath("~/Uploads"), file.SaveFileName + file.Extension);
             if (!File.Exists(filePath))
             {
                 return null;

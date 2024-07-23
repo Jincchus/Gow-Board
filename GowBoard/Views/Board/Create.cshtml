@@ -85,7 +85,19 @@
         imageUploadMethod: 'POST',
         fileUploadURL: '/Board/BoardFileCreate',
         fileUploadMethod: 'POST',
+        htmlAllowedTags: ['.*'],
+        htmlAllowedAttrs: ['.*'],
+        htmlRemoveTags: ['script'],
+        pastePlain: false,
+        htmlExecuteScripts: false,
+        entities: '',
+        htmlDoNotWrapTags: ['br', 'hr'],
+        htmlUntouched: true,
+        useClasses: false,
         events: {
+            'contentChanged': function () {
+                var html = this.html.get(true);
+            },
             'image.uploaded': function (response) {
                 var resObj = JSON.parse(response);
                 boardFileId.push(resObj.boardFileId);

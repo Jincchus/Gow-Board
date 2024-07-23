@@ -48,30 +48,37 @@
                                 </div>
                             </div>
                             <div style="min-height:500px;">
-
-                                <p>@Html.Raw(Model.BoardContent.Content)</p>
+                                @Html.Raw(Model.BoardContent.Content)
                             </div>
                         </div><!-- End Single Post Content -->
 
-                        <!-- TODO: 공지 사항에는 해당 댓글란 안나오게 표현, 로그인한 사람만 해당 댓글 작성 가능하게-->
+                        @if (Model.BoardContent.Category != "Notice") 
+                        {
                         <!-- ======= Comments ======= -->
                         <div class="comments" style="border-top: 3px solid black;">
                             <div class="form mt-3 php-email-form">
                                 <h5 class="comment-title">Comments(@(Model.TotalCommentCount))</h5>
                                 <!-- ======= Comments Form ======= -->
-                                <div class="row justify-content-center mt-3">
+                                @if (Model.MemberInfoOrRole.Member != null)
+                                {
+                                    <div class="row justify-content-center mt-3">
 
-                                    <div class="col-lg-12">
-                                        <div class="row">
-                                            <div class="col-lg-10 mb-3">
-                                                <input type="text" class="form-control" id="ParentComment" placeholder="Add a comment">
-                                            </div>
-                                            <div class="col-lg-2 mb-3">
-                                                <button type="button" id="comment-ajax-btn" class="btn btn-primary ajax-btn" style="width:100%;"> 등록 </button>
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-lg-10 mb-3">
+                                                    <input type="text" class="form-control" id="ParentComment" placeholder="Add a comment">
+                                                </div>
+                                                <div class="col-lg-2 mb-3">
+                                                    <button type="button" id="comment-ajax-btn" class="btn btn-primary ajax-btn" style="width:100%;"> 등록 </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                }
+                                else
+                                {
+                                    <p>댓글을 작성하려면 로그인이 필요합니다.</p>
+                                }
                             </div><!-- End Comments Form -->
                             <!-- parent1 comment start -->
                             @foreach (var comment in Model.Comments)
@@ -87,14 +94,15 @@
                                                 }
                                             </div>
                                             <div class="d-flex align-items-center ms-auto">
-
-                                                @if (comment.Writer.MemberId == Model.BoardContent.Writer.MemberId)
+                                                @if (Model.MemberInfoOrRole.Member != null &&
+                                                    (Model.MemberInfoOrRole.Member.MemberId == comment.Writer.MemberId ||
+                                                    (Model.MemberInfoOrRole.Role != null && Model.MemberInfoOrRole.Role.RoleId == 2)))
                                                 {
                                                     <a href="#" class="update-comment-tag" data-comment-id="@comment.BoardCommentId" data-writer-id="@comment.Writer.MemberId"><span class="text-muted">수정</span></a>
                                                     <span class="mx-1">&bullet;</span>
                                                     <a href="#" class="delete-comment custom-spacing" data-comment-id="@comment.BoardCommentId"><span class="text-muted">삭제</span></a>
                                                 }
-                                                <span class="text-muted">@comment.FormattedCreatedAt</span> 
+                                                <span class="text-muted">@comment.FormattedCreatedAt</span>
                                             </div>
                                         </div>
                                         <div class="comment-body" id="comment-body-@comment.BoardCommentId">
@@ -104,18 +112,29 @@
                                         <!-- 대댓글 작성란 토글 시작-->
                                         <div class="text-md-end">
                                             <i class="bi bi-chat-dots"></i><span class="custom-spacing"> @(comment.Replies?.Count ?? 0)</span>
-                                            <a href="#" class="bi-pencil-fill" data-comment-id="@comment.BoardCommentId"></a> <!-- 대댓글 작성 버튼 -->
-                                        </div>
+
+                                            @if (Model.MemberInfoOrRole.Member != null )
+                                            {
+                                                <a href="#" class="bi-pencil-fill" data-comment-id="@comment.BoardCommentId"></a> <!-- 대댓글 작성 버튼 -->
+                                            }
+                                            </div>
 
                                         <!-- 대댓글 등록창 -->
-                                        <div id="reply-form-container-@comment.BoardCommentId" class="row comment-form-container" style="display:none;">
-                                            <div class="col-lg-10 mb-3">
-                                                <input type="text" class="form-control ChildComment" id="reply-input-@comment.BoardCommentId" placeholder="Add a reply">
+                                        @if (Model.MemberInfoOrRole.Member != null)
+                                        {
+                                            <div id="reply-form-container-@comment.BoardCommentId" class="row comment-form-container" style="display:none;">
+                                                <div class="col-lg-10 mb-3">
+                                                    <input type="text" class="form-control ChildComment" id="reply-input-@comment.BoardCommentId" placeholder="Add a reply">
+                                                </div>
+                                                <div class="col-lg-2 mb-3">
+                                                    <button type="button" class="btn btn-primary ajax-btn reply-comment-btn" style="width:100%;" data-parent-comment-id="@comment.BoardCommentId"> 등록 </button>
+                                                </div>
                                             </div>
-                                            <div class="col-lg-2 mb-3">
-                                                <button type="button" class="btn btn-primary ajax-btn reply-comment-btn" style="width:100%;" data-parent-comment-id="@comment.BoardCommentId"> 등록 </button>
-                                            </div>
-                                        </div>
+                                        }
+                                        else
+                                        {
+                                            <p>대댓글을 작성하려면 로그인이 필요합니다.</p>
+                                        }
                                         <!-- 대댓글 작성란 끝-->
                                         <!-- parent1's child comment start -->
                                         @if (comment.Replies != null && comment.Replies.Any())
@@ -135,7 +154,9 @@
                                                                 </div>
                                                                 <div class="d-flex align-items-center ms-auto">
 
-                                                                    @if (comment.Writer.MemberId == Model.BoardContent.Writer.MemberId)
+                                                                    @if (Model.MemberInfoOrRole.Member != null &&
+                                                                        (Model.MemberInfoOrRole.Member.MemberId == comment.Writer.MemberId ||
+                                                                        (Model.MemberInfoOrRole.Role != null && Model.MemberInfoOrRole.Role.RoleId == 2)))
                                                                     {
                                                                         <a href="#" class="update-comment-tag" data-comment-id="@reply.BoardCommentId" data-writer-id="@reply.Writer.MemberId"><span class="text-muted">수정</span></a>
                                                                         <span class="mx-1">&bullet;</span>
@@ -161,7 +182,7 @@
 
                             }
                         </div><!-- End Comments -->
-
+                        }
                     </div>
                 </div>
                 <!-- View End-->
