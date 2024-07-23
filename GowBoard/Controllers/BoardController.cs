@@ -369,13 +369,21 @@ namespace GowBoard.Controllers
         {
             try
             {
-                bool success = await _fileService.RemoveFile(boardFileId);
-                return Json(new { success = true });
+                var result = await _fileService.RemoveFileAsync(boardFileId);
+                if (result)
+                {
+                    return Json(new { success = true, message ="파일이 성공적으로 삭제되었습니다." });
+                }
+                else
+                {
+                    return Json(new { success = false, messsage = "파일을 찾을 수 없거나 이미 삭제된 파일입니다." });
+                }
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return Json(new { success = false, message = $"파일 삭제 중 오류가 발생했습니다: {ex.Message}" });
             }
+        
         }
 
 

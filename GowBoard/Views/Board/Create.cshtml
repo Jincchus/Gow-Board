@@ -102,26 +102,28 @@
                 var resObj = JSON.parse(response);
                 boardFileId.push(resObj.boardFileId);
             },
-            'image.removed': function ($img) {
+            'image.removed': async function ($img) {
                 var boardFileId = $img.attr('boardfileid');
-                fetch('/Board/RemoveFile', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ boardFileId: boardFileId })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.success) {
 
-                            alert("이미지 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
-                        }
-                    })
-                    .catch(error => {
-                        console.error(error);
-                        alert("이미지 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
+                try {
+                    const response = await fetch('/Board/RemoveFile', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ boardFileId: boardFileId })
                     });
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message || '이미지 삭제 중 오류가 발생했습니다.');
+                    }
+                    console.log("이미지 삭제 완료");
+                }catch(error) {
+                        console.error(error);
+                    alert(`이미지 삭제 중 오류가 발생했습니다.${error.message}`);
+                };
             },
             'image.error': function (error) {
                 console.error(error);
@@ -130,44 +132,92 @@
             'file.uploaded': function (response) {
                 var resObj = JSON.parse(response);
                 boardFileId.push(resObj.boardFileId);
-                $(this).attr('data-boardfileid', boardFileId);
+                var buttonHtml = `
+                <div class="uploaded-file-container" data-boardfileid="${resObj.boardFileId}">
+                    <button type="button" class="uploaded-file">${resObj.fileName}</button>
+                    <button type="button" class="delete-file">X</button>
+                </div>`;
+                editor.html.insert(buttonHtml);
             },
-            'file.unlink': function (link) {
+            'file.unlink': async function (link) {
                 var boardFileId = extractBoardFileIdFromUrl(link);
-                fetch('/Board/RemoveFile', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ boardFileId: boardFileId })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.success) {
-                            alert("파일 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
-                        }
+                debugger
+                try {
+                    const response = await fetch('/Board/RemoveFile', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ boardFileId: boardFileId })
+                    });
 
-                    })
-                    .catch(error => {
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message || '파일 삭제 중 오류가 발생했습니다.');
+                    }
+
+                    var button = editor.el.querySelector(`button[data-boardfileid="${boardFileId}"]`);
+                    if (button) {
+                        button.remove();
+                    }
+
+                    console.log("파일 삭제 완료");
+
+                } catch(error) {
                         console.error(error);
                         alert("파일 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
-                    });
-            },
-            'file.error': function (error) {
-                console.error(error);
-                alert("파일 업로드 중 오류가 발생했습니다. 다시 시도해주세요.");
+                }
             },
         }
     });
 
     // file link의 boardFileId 가공 함수
     function extractBoardFileIdFromUrl(link) {
-        var url = new URL(link);
-        var searchParams = new URLSearchParams(url.search);
-        var boardFileId = searchParams.get('BoardFileId');
-        return boardFileId;
+        try {
+            var url = new URL(link);
+            var searchParams = new URLSearchParams(url.search);
+            var boardFileId = searchParams.get('BoardFileId');
+            return boardFileId;
+        } catch (error) {
+            console.error("URL에서 boardFileId 추출 중 오류 발생:", error);
+            return null;
+        }
     }
 
+    document.addEventListener('click', async function (event) {
+        if (event.target.classList.contains('delete-file')) {
+            event.preventDefault();
+
+            var buttonContainer = event.target.closest('.uploaded-file-container');
+            var boardFileId = buttonContainer.getAttribute('data-boardfileid');
+
+            try {
+                const response = await fetch('/Board/RemoveFile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ boardFileId: boardFileId })
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || '파일 삭제 중 오류가 발생했습니다.');
+                }
+
+                if (buttonContainer) {
+                    buttonContainer.remove();
+                }
+
+                console.log("파일 삭제 완료");
+            } catch (error) {
+                console.error(error);
+                alert("파일 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
+            }
+        }
+    });
 
     const createBoardBtn = document.querySelector("#create-board-ajax-btn");
     createBoardBtn.addEventListener("click", function () {

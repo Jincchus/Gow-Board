@@ -13,6 +13,6 @@ namespace GowBoard.Models.Service.Interface
         Task<int> CreateFileAsync(HttpPostedFileBase file);
         Task<ResFileResult> DownloadFileAsync(int boardFileId);
         Task UpdateFileId(BoardFile boardFile);
-        Task<bool> RemoveFile(int boardFileId);
+        Task<bool> RemoveFileAsync(int boardFileId);
     }
 }

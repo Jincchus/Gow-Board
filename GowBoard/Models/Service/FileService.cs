@@ -45,12 +45,21 @@ namespace GowBoard.Models.Service
             await AddFileAsync(boardFile);
 
             string filePath = Path.Combine(HttpContext.Current.Server.MapPath("~/Uploads"), saveFileName + extension);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.InputStream.CopyToAsync(fileStream);
+            }
+
             file.SaveAs(filePath);
 
             string thumbFileName = saveFileName + "Thumb" + extension;
             string thumbFilePath = Path.Combine(HttpContext.Current.Server.MapPath("~/Uploads/Thumbnail"), thumbFileName);
-            var thumbnail = Image.FromFile(filePath).GetThumbnailImage(100, 100, () => false, IntPtr.Zero);
-            thumbnail.Save(thumbFilePath);
+            using (var image = Image.FromFile(filePath))
+            using (var thumbnail = image.GetThumbnailImage(100, 100, () => false, IntPtr.Zero))
+            {
+                thumbnail.Save(thumbFilePath);
+            }
 
             return boardFileId;
         }
@@ -115,22 +124,42 @@ namespace GowBoard.Models.Service
             }
         }
 
-        public async Task<bool> RemoveFile(int boardFileId)
+        public async Task<bool> RemoveFileAsync(int boardFileId)
         {
-            var file = await _context.BoardFiles.FindAsync(boardFileId);
-            if (file == null) return false;
-
-            _context.BoardFiles.Remove(file);
-            await _context.SaveChangesAsync();
-
-            string filePath = Path.Combine(HttpContext.Current.Server.MapPath("~/Uploads"), file.SaveFileName + file.Extension);
-
-            if (File.Exists(filePath))
+            using (var transaction =  _context.Database.BeginTransaction())
             {
-                File.Delete(filePath);
+                try
+                {
+                    var file = await _context.BoardFiles.FindAsync(boardFileId);
+                    if (file == null) return false;
+
+                    string filePath = Path.Combine(HttpContext.Current.Server.MapPath("~/Uploads"), file.SaveFileName + file.Extension);
+                    string thumbFilePath = Path.Combine(HttpContext.Current.Server.MapPath("~/Uploads/Thumbnail"), file.SaveFileName + "Thumb" + file.Extension);
+
+                    _context.BoardFiles.Remove(file);
+                    await _context.SaveChangesAsync();
+
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
+
+                    if (File.Exists(thumbFilePath))
+                    {
+                        File.Delete(thumbFilePath);
+                    }
+
+                    transaction.Commit();
+                    return true;
+
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
             }
 
-            return true;
         }
 
 
