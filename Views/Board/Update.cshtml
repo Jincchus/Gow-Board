@@ -1,0 +1,236 @@
+@{
+    ViewBag.Title = "Board Update Page";
+    int boardContentId = ViewBag.id;
+}
+
+<main id="main">
+    <section id="contact" class="contact mb-5">
+
+        <div class="container" data-aos="fade-up">
+
+            <div class="row">
+                <div class="col-lg-12 text-center mb-5">
+                    <h1 class="site-title">Gow Board</h1>
+                    <br>
+                    <h3>자유 게시판</h3>
+                </div>
+            </div>
+
+            <!-- start table -->
+            <div class="form mt-5 php-email-form">
+
+                <div class="form-group">
+                    <input type="text" class="form-control" name="Title" id="Title" placeholder="Title" required>
+                </div>
+
+                <form id="editorForm" class="editor" name="Content" method="post" enctype="multipart/form-data">
+                    <div id="editor"></div>
+                </form>
+
+                <div class="text-md-end mt-5">
+                    <button type="submit" id="" class="text-md-end cancel-btn">취소</button>
+                    <button type="button" id="create-board-ajax-btn" class="text-md-end ajax-btn">글등록</button>
+                </div>
+            </div><!-- End table -->
+
+            <br>
+
+
+
+
+
+        </div>
+
+
+    </section>
+
+</main><!-- End #main -->
+<script>
+    const boardContentId = @boardContentId;
+</script>
+<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js'></script>
+<script>
+
+    const cancelBtn = document.querySelector(".cancel-btn");
+    var boardFileId = [];
+    console.log(boardFileId);
+    cancelBtn.addEventListener("click", function () {
+        if (confirm("입력된 글이 모두 사라집니다. 리스트로 돌아가시겠습니까?")) {
+            window.location.href = "/Board/List?category=" + category;
+        }
+    });
+
+    var editor = new FroalaEditor('#editor', {
+        heightMin: 500,
+        heightMax: 500,
+        imageUploadURL: '/Board/BoardFileCreate',
+        imageUploadMethod: 'POST',
+        fileUploadURL: '/Board/BoardFileCreate',
+        fileUploadMethod: 'POST',
+        events: {
+            'image.uploaded': function (response) {
+                var resObj = JSON.parse(response);
+                boardFileId.push(resObj.boardFileId);
+                console.log("Image uploaded, boardFileId:", boardFileId);
+            },
+            'image.removed': function ($img) {
+                var src = $img.attr('src');
+                var boardFileId = extractBoardFileIdFromSrc(src);
+                fetch('/Board/RemoveFile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ boardFileId: boardFileId })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (Array.isArray(boardFileId)) {
+                                boardFileId = boardFileId.filter(id => id !== fileId);
+                            }
+                            console.log("Image removed, updated boardFileId:", boardFileId);
+                        } else {
+                            alert("이미지 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert("이미지 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
+                    });
+            },
+            'image.error': function (error) {
+                console.error(error);
+                alert("이미지 업로드 중 오류가 발생했습니다. 다시 시도해주세요.");
+            },
+            'file.uploaded': function (response) {
+                var resObj = JSON.parse(response);
+                boardFileId.push(resObj.boardFileId);
+            },
+            'file.unlink': function (link) {
+                var boardFileId = extractBoardFileIdFromUrl(link);
+                fetch('/Board/RemoveFile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ boardFileId: boardFileId })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            boardFileId = boardFileId.filter(id => id !== fileId);
+                            console.log("File unlinked, updated boardFileId:", boardFileId); // 확인을 위한 로그 출력
+                        } else {
+                            alert("파일 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
+                        }
+
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert("파일 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
+                    });
+            },
+            'file.error': function (error) {
+                console.error(error);
+                alert("파일 업로드 중 오류가 발생했습니다. 다시 시도해주세요.");
+            },
+        }
+    });
+
+    // file link의 boardFileId 가공 함수
+    function extractBoardFileIdFromUrl(link) {
+        var url = new URL(link);
+        var searchParams = new URLSearchParams(url.search);
+        var boardFileId = searchParams.get('BoardFileId');
+        return boardFileId;
+    }
+
+    function extractBoardFileIdFromSrc(src) {
+        var url = new URL(src);
+        var searchParams = new URLSearchParams(url.search);
+        var fileId = searchParams.get('BoardFileId');
+        return fileId;
+    }
+
+    const createBoardBtn = document.querySelector("#create-board-ajax-btn");
+    createBoardBtn.addEventListener("click", function () {
+        if (!confirm("게시글을 등록하시겠습니까?")) {
+            return;
+        }
+
+        const title = document.querySelector("#Title")
+        const content = editor.el.innerHTML;
+        const contentText = editor.html.get().replace(/<p><br><\/p>/g, '').trim();
+
+        if (title.value.trim() === "") {
+            alert("제목을 입력해주세요");
+
+            title.focus()
+            return;
+        }
+
+        if (contentText == "") {
+            alert("내용을 입력해주세요");
+
+            editor.events.focus()
+            return;
+
+        }
+        let formData = new FormData();
+        formData.append('Title', document.querySelector("#Title").value);
+        formData.append('Content', content);
+
+        console.log("Appending boardFileId to formData:", boardFileId); // 디버깅을 위한 로그 출력
+
+        for (let i = 0; i < boardFileId.length; i++) {
+            formData.append('BoardFileId[]', boardFileId[i]);
+            console.log(`Appended boardFileId[${i}]:`, boardFileId[i]); // 각 파일 ID를 추가할 때 로그 출력
+        }
+
+        fetch('/Board/Update/' + boardContentId, {
+            method: "POST",
+            body: formData
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    window.location.href = "/Board/DetailView/" + boardContentId;
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                alert('전송 오류 : ' + error.message)
+            })
+    });
+
+
+    function editorCall(boardContentId) {
+        fetch(`/Board/UpdateData/${boardContentId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelector('#Title').value = data.title;
+                    editor.html.set(data.content);
+                    boardFileId = data.fileIds || boardFileId;
+                    console.log("boardFileId = " + boardFileId)
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                alert('해당 게시글에 대한 수정 정보를 받아 올 수 없습니다');
+            });
+    }
+
+
+    editorCall(boardContentId);
+
+</script>

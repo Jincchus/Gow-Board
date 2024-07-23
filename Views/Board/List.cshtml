@@ -1,0 +1,295 @@
+@model Tuple<List<GowBoard.Models.DTO.ResponseDTO.ResBoardListDTO>, int, int >
+
+
+@{
+    ViewBag.Title = "Board List Page";
+    int currentPage = ViewBag.CurrentPage;
+    int pageSize = ViewBag.PageSize;
+    int totalCount = Model.Item2;
+    int totalPages = Model.Item3;
+    var errorMessage = TempData["ErrorMessage"] as string;
+    var category = ViewBag.category;
+}
+
+<main id="main">
+    <section id="contact" class="contact mb-5">
+        <div class="container" data-aos="fade-up">
+            <div class="row">
+                <div class="col-lg-12 text-center mb-5">
+                    <h1 class="site-title">Gow Board</h1>
+                    <br>
+                    <h3>@(category == "Board" ? "자유 게시판" : "공지사항") </h3>
+                </div>
+            </div>
+
+            <form id="searchForm">
+                <div class="row justify-content-end">
+                    <div class="col-1 text-end" style="margin-right:-20px;">
+                        <select class="form-select" name="searchType" aria-label="Default select example">
+                            <option value="" selected>전체</option>
+                            <option value="1">제목</option>
+                            <option value="2">내용</option>
+                            @if (category == "Board")
+                            {
+                                <option value="3">작성자</option>
+                            }
+                            <option value="4">댓글</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="searchKeyword" placeholder="Search">
+                            <button type="button" class="input-group-text" id="searchButton">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- start table -->
+            <div class="form mt-2 php-email-form">
+                @if (Model != null && Model.Item1.Count > 0)
+                {
+                    <table class="table" id="board-table">
+                        <thead id="board-table-thead">
+                            <tr>
+                                <th scope="col" style="text-align: center; width:10%">#</th>
+                                @if (category == "Board")
+                                {
+                                    <th scope="col" style="">Photo</th>
+                                }
+                                <th scope="col" style="">Title</th>
+                                @if (category == "Board")
+                                {
+                                    <th scope="col">Writer</th>
+                                }
+                                <th scope="col" style="width:8%">View</th>
+                                <th scope="col" style="width:18%">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="board-table-tbody">
+                            @{
+                                int startNumber = totalCount - ((currentPage - 1) * pageSize);
+                            }
+                            @foreach (var post in Model.Item1)
+                            {
+                                <tr>
+                                    <th scope="row">@startNumber</th>
+
+                                    @if (category == "Board")
+                                    {
+                                        <td>
+                                            @if (post.Files != null && post.Files.Count > 0)
+                                            {
+                                                // TODO: 해당 이미지는 현재 실제 이미지를 불러오는 것 -> 50만 건 이상 들고 올 예정 실제 이미지는 너무 큼
+                                                // 썸네일용 해상도 낮은 사진으로 하나 더 저장을 시켜서 불러오기
+                                                
+                                                <img src="~/Uploads/Thumbnail/@post.Files.First().ThumbUrl" alt="Image" style="max-width: 100px; max-height: 100px;" />
+                                                
+                                            }
+                                            else
+                                            {
+                                                <img src="~/Content/img/gowBoard.png" style="max-width: 100px; max-height:100px;" />
+                                            }
+                                        </td>
+                                    }
+                                    <td>
+                                        <a href="@Url.Action("DetailView", "Board", new { area = "", id = post.BoardContentId })">@post.Title</a><span>(@post.CommentCount)</span>
+                                    </td>
+
+                                    @if (category == "Board")
+                                    {
+                                        <td>@post.Writer.Nickname</td>
+                                    }
+                                    <td>@post.ViewCount</td>
+                                    <td>@post.FormattedCreatedAt</td>
+                                </tr>
+                                startNumber--;
+
+
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="text-center mt-5">
+                        <p> 게시물이 존재하지 않습니다. </p>
+                    </div>
+                }
+
+                <!-- TODO : 만약 Role이 admain이 아니면 NOTICE에서는 해당 글쓰기 버튼이 노출되면 안됨-->
+                <div class="text-md-end mt-5">
+                    <a id="create-post-link" href="@Url.Action("Create", new { area = "" })"><button class="btn btn-dark btn-lg">글쓰기</button></a>
+                </div>
+            </div><!-- End table -->
+
+            <br>
+            <div class="row gy-4">
+                <div class="text-center py-4">
+                    <div class="custom-pagination">
+                        @for (int i = 1; i <= totalPages; i++)
+                        {
+                            <a href="@Url.Action("List", "Board", new { area = "", category = ViewBag.Category, page = i })" @(currentPage == i ? "class=active" : "")>@i</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main><script>
+document.addEventListener("DOMContentLoaded", function () {
+    const createPostLink = document.getElementById("create-post-link");
+    const searchTypeSelect = document.querySelector("select[name='searchType']");
+    const searchInput = document.querySelector("input[name='searchKeyword']");
+    const searchButton = document.getElementById("searchButton");
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get('category');
+
+    if (category) {
+        createPostLink.href = createPostLink.href + "?category=" + category;
+    }
+
+    // 초기 검색 상태 설정
+    searchTypeSelect.value = "@ViewBag.SearchType";
+    searchInput.value = "@ViewBag.SearchKeyword";
+
+    searchButton.addEventListener("click", function () {
+        debugger
+        performSearch(1);
+    });
+
+    searchInput.addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            debugger
+            performSearch(1);
+        }
+    });
+
+    document.querySelectorAll(".custom-pagination a").forEach(function (pageLink) {
+        pageLink.addEventListener("click", function (e) {
+            e.preventDefault();
+            const page = this.getAttribute("data-page");
+            performSearch(page);
+        });
+    });
+
+
+    function performSearch(page) {
+        debugger
+        const searchData = {
+            Category: category,
+            Page: page,
+            PageSize: @pageSize,
+            SearchType: searchTypeSelect.value,
+            SearchKeyword: searchInput.value
+        };
+        debugger
+        fetch('/Board/SearchList', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(searchData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                debugger
+                alert(data.error);
+            } else {
+                updateBoardList(data);
+                updatePagination(data);
+                debugger
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('검색 중 오류가 발생했습니다.');
+        });
+    }
+
+    function updateBoardList(data) {
+        const tbody = document.querySelector("#board-table-tbody");
+        tbody.innerHTML = ''; // 기존 내용 삭제
+
+        if (data != null && data.TotalCount > 0) {
+            data.BoardList.forEach((post, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <th scope="row">${data.TotalCount - ((data.CurrentPage - 1) * data.PageSize) - index}</th>
+                    ${category === 'Board' ? `<td>${getImageHtml(post.Files)}</td>` : ''}
+                    <td><a href="/Board/DetailView?id=${post.BoardContentId}">${post.Title}</a> <span>(${post.CommentCount})</span></td>
+                    ${category === 'Board' ? `<td>${post.Writer.Nickname}</td>` : ''}
+                    <td>${post.ViewCount}</td>
+                    <td>${post.FormattedCreatedAt}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        } else {
+            // 게시물이 존재하지 않습니다. 메시지 표시
+            const messageRow = document.createElement('tr');
+            messageRow.innerHTML = `
+            <td colspan="6" class="text-center mt-5" >
+                <p style ="margin-top: 100px; margin-bottom: 100px;">게시물이 존재하지 않습니다.</p>
+            </td>
+        `;
+            tbody.appendChild(messageRow);
+        }
+    }
+
+    function updatePagination(data) {
+        const pagination = document.querySelector(".custom-pagination");
+        pagination.innerHTML = ''; // 기존 페이지네이션 삭제
+
+        for (let i = 1; i <= data.TotalPages; i++) {
+            const pageLink = document.createElement('a');
+            pageLink.href = "#";
+            pageLink.textContent = i;
+            pageLink.setAttribute("data-page", i);
+            if (i === data.CurrentPage) {
+                pageLink.classList.add('active');
+            }
+            pageLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                performSearch(i);
+            });
+            pagination.appendChild(pageLink);
+        }
+    }
+
+    function getImageHtml(files) {
+        if (files && files.length > 0) {
+
+            return `<img src="/Uploads/Thumbnail/${files[0].ThumbUrl}" alt="Image" style="max-width: 100px; max-height: 100px;" />`;
+        } else {
+            return `<img src="/Content/img/gowBoard.png" style="max-width: 100px; max-height:100px;" />`;
+        }
+    }
+
+    // 초기 게시판 목록 로드
+    updateBoardList({
+        BoardList: @Html.Raw(Json.Encode(Model.Item1)),
+        TotalCount: @totalCount,
+        CurrentPage: @ViewBag.CurrentPage,
+        PageSize: @ViewBag.PageSize
+    });
+
+    // 초기 페이지네이션 설정
+    updatePagination({
+        CurrentPage: @ViewBag.CurrentPage,
+        TotalPages: @totalPages
+    });
+
+    const msg = "@errorMessage";
+    if (msg) {
+        alert(msg);
+    }
+});
+
+
+
+</script>

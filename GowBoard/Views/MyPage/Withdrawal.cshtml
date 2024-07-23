@@ -1,0 +1,49 @@
+@{
+    Layout = "~/Views/Shared/_MyPageLayout.cshtml";
+    ViewBag.Title = "Withdrawal Page";
+}
+
+                <div id="sidebar-after">
+
+                    <section id="contact" class="contact mb-5">
+                        <div class="container" data-aos="fade-up">
+                            <div class="row justify-content-center  mb-5">
+                                <div class="col-lg-10">
+                                    <div class="form ">
+                                        <form action="@Url.Action("Withdrawal", "MyPage")" method="post" role="form" class="php-email-form" id="withdrawal-form" style="padding: 100px;">
+
+                                            <div class="row justify-content-center">
+                                                <div class="col-lg-8 text-center mb-5">
+                                                    <h1 class="page-title">Gow<br>Board</h1>
+                                                    <br>
+                                                    <h3 class="small-title">회원 탈퇴</h3>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+                                            </div>
+
+                                            <div class="text-center ">
+                                                <div class="">
+                                                    <button id="widthdrawal-btn" type="submit" style="width: 100%; font-family: serif;">회원 탈퇴</button>
+                                                </div>
+                                            </div>
+
+
+                                        </form>
+                                    </div>
+                                </div>
+                            </div><!-- End Contact Form -->
+                        </div>
+                    </section>
+                </div>
+
+<script>
+    document.querySelector("#widthdrawal-btn").addEventListener("click", function (event) {
+        if (confirm("탈퇴를 신청하였습니다.  탈퇴 요청 30일 이내에는 해당 아이디로 재가입을 할 수 없으며 30일 동안에는 탈퇴 복구가 가능합니다. 정말 탈퇴하시겠습니까 ? ") == false) {
+            event.preventDefault();
+        } 
+    });
+</script>
+

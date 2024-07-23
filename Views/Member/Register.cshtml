@@ -1,0 +1,134 @@
+@model GowBoard.Models.Entity.Member
+
+@{
+    ViewBag.Title = "Reigster Page";
+}
+
+
+<main id="main">
+    <section id="contact" class="contact mb-5">
+        <div class="container" data-aos="fade-up">
+
+
+            <div class="row justify-content-center mt-5 mb-5">
+                <div class="form mt-5 col-lg-6 ">
+
+
+
+
+                    <form id="register-form" method="post" role="form" class="php-email-form">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8 text-center mb-5">
+                                <h1 class="page-title">Gow<br>Board</h1>
+                                <br>
+                                <h3 class="small-title">회원가입</h3>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <p class="col-md-4 text-md-start">* 아이디</p>
+                            <p class="col-md-8 text-md-end" id="MemberId-validation-text">4~12자의 영문 또는 숫자를 입력해주세요</p>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-8">
+                                <input type="text" class="form-control" name="MemberId" id="MemberId" placeholder="ID" required>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <button type="button" class="ajax-btn" id="MeMberId-check-ajax-btn" style="width: 100%; height: 100%; font-family: serif;">중복 확인</button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <p class="col-md-4 text-md-start">* 비밀번호</p>
+                            <p class="col-md-8 text-md-end" id="Password-validation-text">8자 이상의 영문, 숫자, 특수문자를 사용해주세요</p>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" name="Password" id="Password" placeholder="Password" required>
+                        </div>
+
+                        <div class="row">
+                            <p class="col-md-4 text-md-start">* 비밀번호 확인</p>
+                            <p class="col-md-8 text-md-end" id="PasswordCheck-validation-text"></p>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" name="PasswordCheck" id="PasswordCheck" placeholder="Password Check" required>
+                        </div>
+
+                        <div class="row">
+                            <p class="col-md-4 text-md-start">* 이메일</p>
+                            <p class="col-md-8 text-md-end" id="Email-validation-text"></p>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-8">
+                                <input type="text" name="Email" class="form-control" id="Email" placeholder="Email" required>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <button type="button" class="ajax-btn" id="Email-authentication-ajax-btn" style="width: 100%; height: 100%; font-family: serif;">인증번호 받기</button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-8">
+                                <input type="text" name="checkNum" class="form-control" id="CheckNum" placeholder="인증번호 6자리 숫자 입력" required disabled>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <button type="button" class="ajax-btn" id="CheckNum-ok-btn" style="width: 100%; height: 100%; font-family: serif; display:none;">확인</button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <p class="col-md-4 text-md-start">* 이름</p>
+                            <p class="col-md-8 text-md-end" id="Name-validation-text">한글과 영문만 입력 가능합니다.</p>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="Name" id="Name" placeholder="Name" required>
+                        </div>
+
+                        <div class="row">
+                            <p class="col-md-4 text-md-start">* 닉네임</p>
+                            <p class="col-md-8 text-md-end" id="Nickname-validation-text"></p>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-8">
+                                <input type="text" class="form-control" name="Nickname" id="Nickname" placeholder="Nickname" required>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <button type="button" class="ajax-btn" id="Nickname-check-ajax-btn" style="width: 100%; height: 100%; font-family: serif;">중복 확인</button>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <p class="col-md-4 text-md-start">(선택) 휴대폰 번호</p>
+                            <p class="col-md-8 text-md-end" id="Phone-validation-text"></p>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="Phone" id="Phone" placeholder="Phone">
+                        </div>
+
+                        <div class="text-center ">
+                            <div class="">
+                                <button class="ajax-btn" type="button" id="register-ajax-btn" style="width: 100%; height: 100%; font-family: serif;">회원가입</button>
+                            </div>
+                        </div>
+
+
+                    </form>
+
+
+
+                </div>
+            </div><!-- End Contact Form -->
+
+            <br>
+
+        </div>
+
+
+    </section>
+
+</main><!-- End #main -->
+<script src="~/Scripts/member-js/validation.js"></script>
+<script src="~/Scripts/member-js/duplicated-check.js"></script>
+<script src="~/Scripts/member-js/send-authentication-email.js"></script>
+<script src="~/Scripts/member-js/register-ajax.js"></script>
