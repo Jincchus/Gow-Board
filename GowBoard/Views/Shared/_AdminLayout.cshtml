@@ -5,14 +5,6 @@
     var role = ViewBag.Role;
 }
 
-<script>
-    const msg = "@errorMessage";
-    document.addEventListener("DOMContentLoaded", function () {
-        if (msg) {
-            alert(msg);
-        }
-        });
-</script>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -73,13 +65,13 @@
     </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item active">
+    <li class="nav-item" data-page="/Admin/Dashboard">
         <a class="nav-link" href="@Url.Action("Dashboard","Admin", new { area = ""})">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span>
         </a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item" data-page="/Admin/MemberList">
         <a class="nav-link" href="@Url.Action("MemberList", "Admin", new { area = ""})">
             <i class="fas fa-fw fa-users"></i>
             <span>Member List</span>
@@ -116,7 +108,7 @@
 
                     <!-- Nav Item - User Information -->
                     <li class="nav-item  no-arrow">
-                        <a class="nav-link " href="@Url.Action("Index","Home", new { area = ""})"">
+                        <a class="nav-link " href="@Url.Action("Index","Home", new { area = ""})" ">
                             <span class="mr-2 d-none d-lg-inline text-gray-600 small">Home</span>
                         </a>
 
@@ -152,9 +144,36 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="~/Content/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script>
+    const msg = "@errorMessage";
+    document.addEventListener("DOMContentLoaded", function () {
 
+        if (msg) {
+            alert(msg);
+        }
+
+        const currentPath = window.location.pathname;
+        const navItems = document.querySelectorAll('.nav-item');
+
+        navItems.forEach(item => {
+            const itemPath = item.getAttribute('data-page');
+            if (currentPath.includes(itemPath)) {
+                item.classList.add('active');
+
+                const link = item.querySelector('a');
+                if (link) {
+                    link.classList.add('active');
+                }
+            } else {
+                item.classList.remove('active');
+                const link = item.querySelector('a');
+                if (link) {
+                    link.classList.remove('active');
+                }
+            }
+        })
+    });
+    </script>
     <!-- Chart.js Core Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 

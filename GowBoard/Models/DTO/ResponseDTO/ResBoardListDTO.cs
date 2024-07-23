@@ -13,6 +13,8 @@ namespace GowBoard.Models.DTO.ResponseDTO
         public List<ResBoardFileDTO> Files { get; set; }
         public int CommentCount { get; set; }
 
+        public string Category { get; set; }
+
         public string FormattedCreatedAt
         {
             get

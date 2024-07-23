@@ -84,7 +84,6 @@
                 return response.json();
             })
             .then(data => {
-                debugger
                 if (data.success) {
                     alert(data.message);
                     window.location.href = '/MyPage/MyProfile';

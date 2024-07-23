@@ -1324,3 +1324,15 @@ section {
 #board-table-tbody > tr > td {
     vertical-align: middle;
 }
+
+.new-board{
+    width: 100%;
+    max-height: 194px;
+    min-height: 194px;
+}
+
+.top-view-notice{
+    width: 100%;
+    max-height:312px;
+    min-height:312px;
+}

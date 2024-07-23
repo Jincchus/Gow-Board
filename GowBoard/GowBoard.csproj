@@ -175,6 +175,8 @@
     <Compile Include="Models\DTO\RequestDTO\ReqBoardDTO.cs" />
     <Compile Include="Models\DTO\RequestDTO\ReqLoginDTO.cs" />
     <Compile Include="Models\DTO\RequestDTO\ReqUpdateProfileDTO.cs" />
+    <Compile Include="Models\DTO\ResponseDTO\ResHomeDTO.cs" />
+    <Compile Include="Models\DTO\ResponseDTO\ResPostRankDTO.cs" />
     <Compile Include="Models\DTO\ResponseDTO\ResAdminMemberListDTO.cs" />
     <Compile Include="Models\DTO\ResponseDTO\ResDashboardDTO.cs" />
     <Compile Include="Models\DTO\ResponseDTO\ResFileResult.cs" />
@@ -230,6 +232,7 @@
     <Content Include="Content\img\boardImage %282%29.jpg" />
     <Content Include="Content\img\BoardImage.jpg" />
     <Content Include="Content\img\gowBoard.png" />
+    <Content Include="Content\img\main_basic_picture.PNG" />
     <Content Include="Content\sb-admin-2.css" />
     <Content Include="Content\sb-admin-2.min.css" />
     <Content Include="Content\vendor\aos\aos.cjs.js" />
@@ -634,6 +637,7 @@
     <Content Include="Content\webfonts\fa-solid-900.ttf" />
     <Content Include="Content\webfonts\fa-solid-900.woff" />
     <Content Include="Content\webfonts\fa-solid-900.woff2" />
+    <Content Include="Content\img\ZenBlog.zip" />
     <None Include="packages\jQuery.3.4.1\Content\Scripts\jquery-3.4.1-vsdoc.js" />
     <None Include="packages\jQuery.3.4.1\Tools\jquery-3.4.1.intellisense.js" />
     <None Include="packages\jQuery.Validation.1.17.0\Content\Scripts\jquery.validate-vsdoc.js" />

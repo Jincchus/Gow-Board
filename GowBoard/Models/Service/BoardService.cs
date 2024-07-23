@@ -1,6 +1,7 @@
 ﻿using GowBoard.Models.Context;
 using GowBoard.Models.DTO.RequestDTO;
 using GowBoard.Models.DTO.ResponseDTO;
+using GowBoard.Models.DTO.ResponseDTO.Home;
 using GowBoard.Models.Entity;
 using GowBoard.Models.Service.Interface;
 using System;
@@ -313,6 +314,89 @@ namespace GowBoard.Models.Service
             var counts = dates.Select(date => dailyCounts.FirstOrDefault(d => d.Date == date)?.Count ?? 0).ToList();
 
             return (dates, counts);
+        }
+
+
+        public async Task<List<ResPostRankDTO>> GetTopViewNoticeLastMonth()
+        {
+            var oneMonth = DateTime.Now.AddMonths(-1);
+
+            return await _context.BoardContents
+                .Where(bc => bc.Category == "Notice" && bc.CreatedAt >= oneMonth)
+                .OrderByDescending(bc => bc.ViewCount)
+                .Take(2)
+                .Select(bc => new ResPostRankDTO
+                {
+                    BoardContentId = bc.BoardContentId,
+                    Title = bc.Title,
+                    CreatedAt = bc.CreatedAt,
+                    Category = bc.Category,
+                    Writer = new ResWriterDTO
+                    {
+                        MemberId = bc.WriterId,
+                        Nickname = bc.Writer.Nickname
+                    },
+                    Files = bc.BoardFiles
+                    .OrderByDescending(bf => bf.BoardFileId)
+                    .Take(1)
+                    .Select(f => new ResBoardFileDTO
+                    {
+                        ThumbUrl = f.SaveFileName + f.Extension,
+                        FileName = f.SaveFileName,
+                        Extension = f.Extension,
+                        FileSize = f.FileSize,
+                    }).FirstOrDefault()
+                }).ToListAsync();
+        }
+
+        public async Task<List<ResPostRankDTO>> GetNewPostByCategory(string category)
+        {
+            return await _context.BoardContents
+                .Where(bc => bc.Category == category)
+                .OrderByDescending(bc => bc.CreatedAt)
+                .Take(3)
+                .Select(bc => new ResPostRankDTO
+                {
+                    BoardContentId = bc.BoardContentId,
+                    Category = bc.Category,
+                    Title = bc.Title,
+                    CreatedAt = bc.CreatedAt,
+                    Writer = new ResWriterDTO
+                    {
+                        MemberId = bc.WriterId,
+                        Nickname = bc.Writer.Nickname
+                    },
+                    Files = bc.BoardFiles
+                    .OrderByDescending(bf => bf.BoardFileId)
+                    .Take(1)
+                    .Select(f => new ResBoardFileDTO
+                    {
+                        ThumbUrl = f.SaveFileName + f.Extension,
+                        FileName = f.SaveFileName,
+                        Extension = f.Extension,
+                        FileSize = f.FileSize,
+                    }).FirstOrDefault()
+                }).ToListAsync();
+        }
+
+        public async Task<List<ResPostRankDTO>> GetTopFiveFreeBoards()
+        {
+            return await _context.BoardContents
+                .Where(bc => bc.Category == "Board")
+                .OrderByDescending(bc => bc.ViewCount)
+                .Take(5)
+                .Select(bc => new ResPostRankDTO
+                {
+                    BoardContentId = bc.BoardContentId,
+                    Category = bc.Category,
+                    Title = bc.Title,
+                    CreatedAt = bc.CreatedAt,
+                    Writer = new ResWriterDTO
+                    {
+                        MemberId = bc.WriterId,
+                        Nickname = bc.Writer.Nickname
+                    },
+                }).ToListAsync(); ;
         }
     }
 

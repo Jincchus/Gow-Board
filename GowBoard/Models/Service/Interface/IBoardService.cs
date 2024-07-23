@@ -1,5 +1,6 @@
 ﻿using GowBoard.Models.DTO.RequestDTO;
 using GowBoard.Models.DTO.ResponseDTO;
+using GowBoard.Models.DTO.ResponseDTO.Home;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,5 +18,8 @@ namespace GowBoard.Models.Service.Interface
         Task<int> GetTotalCountAsync(string caregory);
         Task<(List<DateTime>, List<int>)> GetDailyBoardCountAsync(string caregory, int days);
 
+        Task<List<ResPostRankDTO>> GetTopViewNoticeLastMonth();
+        Task<List<ResPostRankDTO>> GetNewPostByCategory(string category);
+        Task<List<ResPostRankDTO>> GetTopFiveFreeBoards();
     }
 }

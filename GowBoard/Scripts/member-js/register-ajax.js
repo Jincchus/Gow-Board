@@ -12,7 +12,6 @@
 
         const allValid = Object.values(validationResults).every(result => result === true);
         if (!allValid) {
-            debugger
             alert('유효성 검사를 확인 후 다시 시도하여주십시오');
             return;
         }

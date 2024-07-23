@@ -207,7 +207,7 @@
                 var commentId = e.target.dataset.commentId;
                 var writerId = e.target.dataset.writerId;
                 var newContent = e.target.previousElementSibling.value;
-                debugger
+
                 fetch('/Comment/Update', {
                     method: 'POST',
                     headers: {
@@ -237,7 +237,6 @@
             if (e.target.closest('.delete-comment')) {
                 e.preventDefault();
                 var commentId = e.target.closest('.delete-comment').dataset.commentId;
-                debugger
 
                 if (confirm('댓글을 정말로 삭제하시겠습니까?')) {
                     fetch('/Comment/Delete/'+commentId, {
@@ -252,16 +251,13 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                debugger
                                 var commentElement = document.getElementById('comment-body-' + commentId).closest('.comment, .reply');
                                 commentElement.parentElement.removeChild(commentElement)
                             } else {
-                                debugger
                                 alert(data.message);
                             }
                         })
                         .catch(error => {
-                            debugger
                             alert('서버 오류 : ' + error.message);
                         })
                 }

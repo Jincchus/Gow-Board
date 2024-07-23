@@ -44,8 +44,6 @@ emailAuthenticationBtn.addEventListener("click", function () {
             return response.json();
         })
         .then(data => {
-            debugger
-
             const checkNum = document.querySelector("#CheckNum");
             const checkNumbOkBtn = document.querySelector("#CheckNum-ok-btn");
 
