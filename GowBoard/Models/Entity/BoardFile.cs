@@ -38,6 +38,9 @@ namespace GowBoard.Models.Entity
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
 
+        [Column("is_editor_image")]
+        public bool IsEditorImage { get; set; }
+
         [ForeignKey("BoardContentId")]
         public virtual BoardContent BoardContent { get; set; }
     }

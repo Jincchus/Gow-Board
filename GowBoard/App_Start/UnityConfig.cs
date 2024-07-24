@@ -1,5 +1,5 @@
-using GowBoard.Models.Service;
 using GowBoard.Models.Service.Interface;
+using GowBoard.Models.Service;
 using System.Web.Mvc;
 using Unity;
 using Unity.Mvc5;
@@ -10,8 +10,8 @@ namespace GowBoard
     {
         public static void RegisterComponents()
         {
-			var container = new UnityContainer();
-            
+            var container = new UnityContainer();
+
             container.RegisterType<IMemberService, MemberService>();
             container.RegisterType<IBoardService, BoardService>();
             container.RegisterType<IFileService, FileService>();

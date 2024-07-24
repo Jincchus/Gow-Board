@@ -106,7 +106,8 @@ namespace GowBoard.Models.Service
                     BoardFiles = b.BoardFiles.Select(f => new ResFileResult
                     {
                         BoardFileId = f.BoardFileId,
-                        FileName = f.OriginFileName
+                        FileName = f.OriginFileName,
+                        IsEditorImage = f.IsEditorImage
                     }).ToList()
                 })
                 .FirstOrDefault();

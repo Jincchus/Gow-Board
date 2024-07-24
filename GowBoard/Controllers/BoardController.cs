@@ -232,7 +232,7 @@ namespace GowBoard.Controllers
             _boardService.UpdateViewCount(id.Value);
 
             var boardFiles = new List<ResFileResult>();
-            var fileIds = boardContent.BoardFiles; // Assuming this property exists and contains a list of file IDs
+            var fileIds = boardContent.BoardFiles.Where(f => !f.IsEditorImage);
             foreach (var fileId in fileIds)
             {
                 var file = await _fileService.GetFileByIdAsync(fileId.BoardFileId);
@@ -241,7 +241,8 @@ namespace GowBoard.Controllers
                     boardFiles.Add(new ResFileResult
                     {
                         FileName = file.OriginFileName,
-                        BoardFileId = file.BoardFileId
+                        BoardFileId = file.BoardFileId,
+                        IsEditorImage = file.IsEditorImage // Include IsEditorImage property
                     });
                 }
             }
@@ -256,7 +257,7 @@ namespace GowBoard.Controllers
                 },
                 Comments = boardComments,
                 TotalCommentCount = totalCommentCount,
-                boardFiles = boardFiles
+                BoardFiles = boardFiles
             };
 
             return View(viewModel);
@@ -280,13 +281,21 @@ namespace GowBoard.Controllers
             {
                 if (role.RoleName == "admin" || boardContent.Writer.MemberId == memberId)
                 {
+                    var attachments = boardContent.BoardFiles
+                        .Select(f => new {
+                            id = f.BoardFileId,
+                            name = f.FileName,
+                            isEditorImage = Convert.ToBoolean(f.IsEditorImage)
+                        })
+                        .Where(f => !f.isEditorImage);
+
                     return Json(new
                     {
                         success = true,
                         title = boardContent.Title,
                         content = boardContent.Content,
                         category = boardContent.Category,
-                        boardFiles = boardContent.BoardFiles.Select(f => new { id = f.BoardFileId, name = f.FileName })
+                        boardFiles = attachments
                     }, JsonRequestBehavior.AllowGet);
                 }
                 return Json(new { success = false, message = "해당 글에 관한 권한이 없습니다." }, JsonRequestBehavior.AllowGet);

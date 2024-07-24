@@ -102,7 +102,7 @@
                 boardImageIds.push(resObj.boardFileId);
             },
             'image.removed': async function ($img) {
-                const boardFileIdToRemove = $img.attr('boardfileid'); 
+                const boardFileIdToRemove = $img.attr('boardfileid');
 
                 try {
                     const response = await fetch('/Board/RemoveFile', {

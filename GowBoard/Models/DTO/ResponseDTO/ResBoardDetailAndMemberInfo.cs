@@ -10,7 +10,7 @@ namespace GowBoard.Models.DTO.ResponseDTO
         public List<ResBoardCommentDTO> Comments { get; set; }
         public int TotalCommentCount { get; set; }
 
-        public List<ResFileResult> boardFiles { get; set; }
+        public List<ResFileResult> BoardFiles { get; set; }
     }
 
 }

@@ -57,10 +57,16 @@ namespace GowBoard.Controllers
                 // 해당 세션 정보(memberId)로 회원 조회
                 string memberId = Session["MemberId"].ToString();
                 var member = _memberService.GetMemberById(memberId);
+                var role = _memberService.GetRoleByMemberId(memberId);
 
-                if (member != null)
+                if (member != null && role != null)
                 {
-                    return View(member);
+                    var memberAndRole = new ResMemberInfoOrRole
+                    {
+                        Member = member,
+                        Role = role
+                    };
+                    return View(memberAndRole);
                 }
                 else
                 {
@@ -110,6 +116,7 @@ namespace GowBoard.Controllers
                 // 해당 세션 정보(memberId)로 회원 조회
                 string memberId = Session["MemberId"].ToString();
                 var member = _memberService.GetMemberById(memberId);
+                var role = _memberService.GetRoleByMemberId(memberId);
 
                 if (TempData["ErrorMessage"] != null)
                 {
@@ -117,9 +124,14 @@ namespace GowBoard.Controllers
                     return View(member);
                 }
 
-                if (member != null)
+                if (member != null && role != null)
                 {
-                    return View(member);
+                    var memberAndRole = new ResMemberInfoOrRole
+                    {
+                        Member = member,
+                        Role = role
+                    };
+                    return View(memberAndRole);
                 }
                 else
                 {
