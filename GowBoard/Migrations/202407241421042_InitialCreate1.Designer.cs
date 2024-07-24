@@ -7,13 +7,13 @@ namespace GowBoard.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.5.1")]
-    public sealed partial class commententity : IMigrationMetadata
+    public sealed partial class InitialCreate1 : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(commententity));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialCreate1));
         
         string IMigrationMetadata.Id
         {
-            get { return "202407170514479_commententity"; }
+            get { return "202407241421042_InitialCreate1"; }
         }
         
         string IMigrationMetadata.Source

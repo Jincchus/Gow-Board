@@ -125,9 +125,22 @@
             <div class="row gy-4">
                 <div class="text-center py-4">
                     <div class="custom-pagination">
-                        @for (int i = 1; i <= totalPages; i++)
+                        @if (currentPage > 1)
+                        {
+                            <a href="#" data-page="@(currentPage - 1)" class="prev-page">&lt; </a>
+                        }
+                        @{
+                            int startPage = Math.Max(1, currentPage - 4);
+                            int endPage = Math.Min(totalPages, startPage + 9);
+                            startPage = Math.Max(1, endPage - 9);
+                        }
+                        @for (int i = startPage; i <= endPage; i++)
                         {
                             <a href="#" data-page="@i" @(currentPage == i ? "class=active" : "")>@i</a>
+                        }
+                        @if (currentPage < totalPages)
+                        {
+                            <a href="#" data-page="@(currentPage + 1)" class="next-page"> &gt;</a>
                         }
                     </div>
                 </div>

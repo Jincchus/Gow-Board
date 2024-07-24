@@ -1,5 +1,6 @@
 ﻿using GowBoard.Models.Context;
 using GowBoard.Models.DTO.RequestDTO;
+using GowBoard.Models.DTO.ResponseDTO;
 using GowBoard.Models.Entity;
 using GowBoard.Models.Service.Interface;
 using System;
@@ -21,7 +22,7 @@ namespace GowBoard.Models.Service
             _context = context;
         }
 
-        public async Task<int> CreateFileAsync(HttpPostedFileBase file)
+        public async Task<int> CreateFileAsync(HttpPostedFileBase file, bool isEditorImage)
         {
             if (file == null || file.ContentLength == 0)
                 throw new ArgumentException("파일이 존재하지 않습니다");
@@ -45,6 +46,7 @@ namespace GowBoard.Models.Service
                         OriginFileName = originFileName,
                         SaveFileName = saveFileName,
                         CreatedAt = DateTime.Now,
+                        IsEditorImage = isEditorImage,
                     };
 
                     _context.BoardFiles.Add(boardFile);

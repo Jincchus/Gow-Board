@@ -87,6 +87,9 @@
         heightMax: 500,
         imageUploadURL: '/Board/BoardFileCreate',
         imageUploadMethod: 'POST',
+        imageUploadParams: {
+            isEditorImage: true
+        },
         htmlAllowedTags: ['.*'],
         htmlAllowedAttrs: ['.*'],
         htmlRemoveTags: ['script'],
@@ -273,20 +276,22 @@
                 if (data.success) {
                     document.querySelector('#Title').value = data.title;
                     editor.html.set(data.content);
-                    boardFileIds = data.boardFiles.map(file => file.id) || [];
+
+                    boardFileIds = data.boardFiles.map(file => !file.isEditorImage) || [];
                     console.log("boardFileIds = ", boardFileIds);
 
-                    // 기존 파일 목록 표시
                     if (fileList) {
-                        fileList.innerHTML = ''; // 기존 목록 초기화
+                        fileList.innerHTML = '';
                         data.boardFiles.forEach(file => {
-                            const fileItem = document.createElement('div');
-                            fileItem.className = 'file-item';
-                            fileItem.innerHTML = `
-                        <span>${file.name}</span> 
-                        <button type="button" class="remove-file" data-id="${file.id}">X</button>
-                    `;
-                            fileList.appendChild(fileItem);
+                            if (!file.isEditorImage) {
+                                const fileItem = document.createElement('div');
+                                fileItem.className = 'file-item';
+                                fileItem.innerHTML = `
+                                <span>${file.name}</span> 
+                                <button type="button" class="remove-file" data-id="${file.id}">X</button>
+                            `;
+                                fileList.appendChild(fileItem);
+                            }
                         });
                     }
                 } else {

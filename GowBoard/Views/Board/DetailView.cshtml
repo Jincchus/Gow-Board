@@ -51,14 +51,14 @@
         @Html.Raw(Model.BoardContent.Content)
     </div>
 
-    <div class="card" >
+    <div class="card mb-4" >
         <div class="card-header">
             첨부파일
         </div>
         <ul class="list-group list-group-flush">
-            @if (Model.boardFiles != null && Model.boardFiles.Any())
+            @if (Model.BoardFiles != null && Model.BoardFiles.Any())
             {
-                foreach (var file in Model.boardFiles)
+                foreach (var file in Model.BoardFiles)
                 {
                     <li class="list-group-item">
                         <a href="@Url.Action("DownloadFile", "Board", new { boardFileId = file.BoardFileId })" target="_blank" data-id="@file.BoardFileId">

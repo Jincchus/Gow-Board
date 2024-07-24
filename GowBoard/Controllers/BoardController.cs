@@ -100,7 +100,7 @@ namespace GowBoard.Controllers
         // POST: Board/BoardFileCreate
         // editor 파일 등록시 파일 저장
         [HttpPost]
-        public async Task<ActionResult> BoardFileCreate(HttpPostedFileBase file)
+        public async Task<ActionResult> BoardFileCreate(HttpPostedFileBase file, bool isEditorImage = false)
         {
             if (file != null && file.ContentLength > 0)
             {
@@ -112,7 +112,7 @@ namespace GowBoard.Controllers
 
                 try
                 {
-                    int boardFileId = await _fileService.CreateFileAsync(file);
+                    int boardFileId = await _fileService.CreateFileAsync(file, isEditorImage);
                     string downloadLink = Url.Action("DownloadFile", "Board", new { BoardFileId = boardFileId }, protocol: Request.Url.Scheme);
 
                     var response = new
@@ -242,7 +242,7 @@ namespace GowBoard.Controllers
                     {
                         FileName = file.OriginFileName,
                         BoardFileId = file.BoardFileId,
-                        IsEditorImage = file.IsEditorImage // Include IsEditorImage property
+                        IsEditorImage = file.IsEditorImage
                     });
                 }
             }
@@ -281,13 +281,8 @@ namespace GowBoard.Controllers
             {
                 if (role.RoleName == "admin" || boardContent.Writer.MemberId == memberId)
                 {
-                    var attachments = boardContent.BoardFiles
-                        .Select(f => new {
-                            id = f.BoardFileId,
-                            name = f.FileName,
-                            isEditorImage = Convert.ToBoolean(f.IsEditorImage)
-                        })
-                        .Where(f => !f.isEditorImage);
+                    var attachments = boardContent.BoardFiles.Where(f => !f.IsEditorImage)
+                                                  .Select(f => new { id = f.BoardFileId, name = f.FileName });
 
                     return Json(new
                     {

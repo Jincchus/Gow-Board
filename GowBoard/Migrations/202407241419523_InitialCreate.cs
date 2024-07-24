@@ -3,16 +3,16 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class InitialCreate1 : DbMigration
+    public partial class InitialCreate : DbMigration
     {
         public override void Up()
         {
-            DropColumn("dbo.board_file", "is_editor_image");
+            AddColumn("dbo.board_file", "is_editor_image", c => c.Boolean(nullable: false));
         }
         
         public override void Down()
         {
-            AddColumn("dbo.board_file", "is_editor_image", c => c.Boolean(nullable: false));
+            DropColumn("dbo.board_file", "is_editor_image");
         }
     }
 }

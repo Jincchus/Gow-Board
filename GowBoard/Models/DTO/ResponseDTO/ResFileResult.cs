@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace GowBoard.Models.DTO.RequestDTO
+namespace GowBoard.Models.DTO.ResponseDTO
 {
     public class ResFileResult
     {
