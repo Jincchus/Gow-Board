@@ -169,7 +169,7 @@
                 fileItem.className = 'file-item';
                 fileItem.innerHTML = `
                     <span>${file.name}</span>
-                    <button type="button" class="remove-file" data-id="${result.boardFileId}">X</button>
+                    <button type="button" class="remove-file bi bi-file-earmark-x" data-id="${result.boardFileId}" ></button>
                 `;
                 fileList.appendChild(fileItem);
                 boardFileIds.push(result.boardFileId); // 배열에 파일 ID 추가
@@ -236,24 +236,19 @@
             return;
         }
 
-        debugger
-
         let formData = new FormData();
         formData.append('Title', title.value);
         formData.append('Category', category);
         formData.append('Content', content);
 
-        debugger
         for (let i = 0; i < boardFileIds.length; i++) {
             formData.append('BoardFileId[]', boardFileIds[i]);
         }
 
-        debugger
         for (let i = 0; i < boardImageIds.length; i++) {
             formData.append('BoardFileId[]', boardImageIds[i]);
         }
 
-        debugger
         fetch('/Board/Create', {
             method: "POST",
             body: formData

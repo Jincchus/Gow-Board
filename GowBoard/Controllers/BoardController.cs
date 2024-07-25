@@ -373,7 +373,7 @@ namespace GowBoard.Controllers
                 {
                     if (role.RoleName == "admin" || boardContent.Writer.MemberId == memberId)
                     {
-                        _boardService.DeleteBoardAsync(id);
+                        await _boardService.DeleteBoardAsync(id);
                         return RedirectToAction("List", new { category = category });
                     }
                     TempData["ErrorMessage"] = "해당 글에 관한 권한이 없습니다.";

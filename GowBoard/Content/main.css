@@ -1336,3 +1336,16 @@ section {
     max-height:312px;
     min-height:312px;
 }
+
+
+.remove-file {
+    border: none; /* border 제거 */
+    background-color: transparent; /* 배경색 투명으로 설정 */
+    padding: 0; /* 버튼 내부 여백 제거 (선택 사항) */
+    cursor: pointer; /* 마우스 포인터를 손 모양으로 변경 */
+    font-size:25px;
+}
+
+.custom-pagination a.active {
+    color: #fff !important; /* active 상태일 때 글자 색상 하얀색으로 설정 */
+}

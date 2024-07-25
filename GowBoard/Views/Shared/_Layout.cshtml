@@ -67,9 +67,15 @@
             <nav id="navbar" class="navbar">
                 <ul>
 
-                    <li><a href="@Url.Action("Index", "Home", new { area = "" })">Home</a></li>
-                    <li><a href="@Url.Action("List", "Board", new { area = "", category="Board"})">Board</a></li>
-                    <li><a href="@Url.Action("List", "Board", new { area = "", category = "Notice" })">Notice</a></li>
+                    <a href="@Url.Action("Index", "Home", new { area = "" })" style="padding-right:30px;">
+                    <li class="mr-1">Home</li>
+                    </a>
+                    <a href="@Url.Action("List", "Board", new { area = "", category="Board"})" style="padding-right:30px;">
+                    <li class="mr-1">Board</li>
+                    </a>
+                    <a href="@Url.Action("List", "Board", new { area = "", category = "Notice" })" style="padding-right:30px;">
+                    <li class="mr-1">Notice</li>
+                    </a>
 
                 </ul>
             </nav><!-- .navbar -->

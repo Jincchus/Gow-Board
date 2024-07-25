@@ -61,6 +61,12 @@
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Configuration.ConfigurationBuilders.Base, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Configuration.ConfigurationBuilders.Base.2.0.0\lib\Net471\Microsoft.Configuration.ConfigurationBuilders.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Configuration.ConfigurationBuilders.UserSecrets, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Configuration.ConfigurationBuilders.UserSecrets.2.0.0\lib\Net471\Microsoft.Configuration.ConfigurationBuilders.UserSecrets.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Web.Infrastructure, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.2.0.1\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
@@ -141,13 +147,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202407241419523_InitialCreate.cs" />
-    <Compile Include="Migrations\202407241419523_InitialCreate.Designer.cs">
-      <DependentUpon>202407241419523_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202407241421042_InitialCreate1.cs" />
-    <Compile Include="Migrations\202407241421042_InitialCreate1.Designer.cs">
-      <DependentUpon>202407241421042_InitialCreate1.cs</DependentUpon>
+    <Compile Include="Migrations\202407250543313_InitialCreate.cs" />
+    <Compile Include="Migrations\202407250543313_InitialCreate.Designer.cs">
+      <DependentUpon>202407250543313_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\DTO\RequestDTO\ReqSearchBoardDTO.cs" />
@@ -214,42 +216,72 @@
     <Content Include="Content\img\BoardImage.jpg" />
     <Content Include="Content\img\gowBoard.png" />
     <Content Include="Content\img\main_basic_picture.PNG" />
+    <Content Include="Content\main.css" />
     <Content Include="Content\sb-admin-2.css" />
     <Content Include="Content\sb-admin-2.min.css" />
+    <Content Include="Content\variables.css" />
     <Content Include="Content\vendor\aos\aos.cjs.js" />
     <Content Include="Content\vendor\aos\aos.css" />
     <Content Include="Content\vendor\aos\aos.esm.js" />
     <Content Include="Content\vendor\aos\aos.js" />
+    <Content Include="Content\vendor\aos\aos.js.map" />
     <Content Include="Content\vendor\bootstrap-icons\bootstrap-icons.css" />
+    <Content Include="Content\vendor\bootstrap-icons\bootstrap-icons.json" />
     <Content Include="Content\vendor\bootstrap-icons\bootstrap-icons.min.css" />
+    <Content Include="Content\vendor\bootstrap-icons\bootstrap-icons.scss" />
+    <Content Include="Content\vendor\bootstrap-icons\fonts\bootstrap-icons.woff" />
+    <Content Include="Content\vendor\bootstrap-icons\fonts\bootstrap-icons.woff2" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap-grid.css" />
+    <Content Include="Content\vendor\bootstrap\css\bootstrap-grid.css.map" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap-grid.min.css" />
+    <Content Include="Content\vendor\bootstrap\css\bootstrap-grid.min.css.map" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap-grid.rtl.css" />
+    <Content Include="Content\vendor\bootstrap\css\bootstrap-grid.rtl.css.map" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap-grid.rtl.min.css" />
+    <Content Include="Content\vendor\bootstrap\css\bootstrap-grid.rtl.min.css.map" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap-reboot.css" />
+    <Content Include="Content\vendor\bootstrap\css\bootstrap-reboot.css.map" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap-reboot.min.css" />
+    <Content Include="Content\vendor\bootstrap\css\bootstrap-reboot.min.css.map" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap-reboot.rtl.css" />
+    <Content Include="Content\vendor\bootstrap\css\bootstrap-reboot.rtl.css.map" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap-reboot.rtl.min.css" />
+    <Content Include="Content\vendor\bootstrap\css\bootstrap-reboot.rtl.min.css.map" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap-utilities.css" />
+    <Content Include="Content\vendor\bootstrap\css\bootstrap-utilities.css.map" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap-utilities.min.css" />
+    <Content Include="Content\vendor\bootstrap\css\bootstrap-utilities.min.css.map" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap-utilities.rtl.css" />
+    <Content Include="Content\vendor\bootstrap\css\bootstrap-utilities.rtl.css.map" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap-utilities.rtl.min.css" />
+    <Content Include="Content\vendor\bootstrap\css\bootstrap-utilities.rtl.min.css.map" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap.css" />
+    <Content Include="Content\vendor\bootstrap\css\bootstrap.css.map" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap.min.css" />
+    <Content Include="Content\vendor\bootstrap\css\bootstrap.min.css.map" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap.rtl.css" />
+    <Content Include="Content\vendor\bootstrap\css\bootstrap.rtl.css.map" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap.rtl.min.css" />
+    <Content Include="Content\vendor\bootstrap\css\bootstrap.rtl.min.css.map" />
     <Content Include="Content\vendor\bootstrap\js\bootstrap.bundle.js" />
+    <Content Include="Content\vendor\bootstrap\js\bootstrap.bundle.js.map" />
     <Content Include="Content\vendor\bootstrap\js\bootstrap.bundle.min.js" />
+    <Content Include="Content\vendor\bootstrap\js\bootstrap.bundle.min.js.map" />
     <Content Include="Content\vendor\bootstrap\js\bootstrap.esm.js" />
+    <Content Include="Content\vendor\bootstrap\js\bootstrap.esm.js.map" />
     <Content Include="Content\vendor\bootstrap\js\bootstrap.esm.min.js" />
+    <Content Include="Content\vendor\bootstrap\js\bootstrap.esm.min.js.map" />
     <Content Include="Content\vendor\bootstrap\js\bootstrap.js" />
+    <Content Include="Content\vendor\bootstrap\js\bootstrap.js.map" />
     <Content Include="Content\vendor\bootstrap\js\bootstrap.min.js" />
+    <Content Include="Content\vendor\bootstrap\js\bootstrap.min.js.map" />
     <Content Include="Content\vendor\glightbox\css\glightbox.css" />
     <Content Include="Content\vendor\glightbox\css\glightbox.min.css" />
     <Content Include="Content\vendor\glightbox\js\glightbox.js" />
     <Content Include="Content\vendor\glightbox\js\glightbox.min.js" />
     <Content Include="Content\vendor\swiper\swiper-bundle.min.css" />
     <Content Include="Content\vendor\swiper\swiper-bundle.min.js" />
+    <Content Include="Content\vendor\swiper\swiper-bundle.min.js.map" />
     <Content Include="Content\webfonts\fa-brands-400.svg" />
     <Content Include="Content\webfonts\fa-regular-400.svg" />
     <Content Include="Content\webfonts\fa-solid-900.svg" />
@@ -257,34 +289,6 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\board-js\board-comment-ajax.js" />
-    <Content Include="Content\vendor\aos\aos.js.map" />
-    <Content Include="Content\vendor\bootstrap-icons\bootstrap-icons.json" />
-    <Content Include="Content\vendor\bootstrap-icons\bootstrap-icons.scss" />
-    <Content Include="Content\vendor\bootstrap-icons\fonts\bootstrap-icons.woff" />
-    <Content Include="Content\vendor\bootstrap-icons\fonts\bootstrap-icons.woff2" />
-    <Content Include="Content\vendor\bootstrap\css\bootstrap-grid.css.map" />
-    <Content Include="Content\vendor\bootstrap\css\bootstrap-grid.min.css.map" />
-    <Content Include="Content\vendor\bootstrap\css\bootstrap-grid.rtl.css.map" />
-    <Content Include="Content\vendor\bootstrap\css\bootstrap-grid.rtl.min.css.map" />
-    <Content Include="Content\vendor\bootstrap\css\bootstrap-reboot.css.map" />
-    <Content Include="Content\vendor\bootstrap\css\bootstrap-reboot.min.css.map" />
-    <Content Include="Content\vendor\bootstrap\css\bootstrap-reboot.rtl.css.map" />
-    <Content Include="Content\vendor\bootstrap\css\bootstrap-reboot.rtl.min.css.map" />
-    <Content Include="Content\vendor\bootstrap\css\bootstrap-utilities.css.map" />
-    <Content Include="Content\vendor\bootstrap\css\bootstrap-utilities.min.css.map" />
-    <Content Include="Content\vendor\bootstrap\css\bootstrap-utilities.rtl.css.map" />
-    <Content Include="Content\vendor\bootstrap\css\bootstrap-utilities.rtl.min.css.map" />
-    <Content Include="Content\vendor\bootstrap\css\bootstrap.css.map" />
-    <Content Include="Content\vendor\bootstrap\css\bootstrap.min.css.map" />
-    <Content Include="Content\vendor\bootstrap\css\bootstrap.rtl.css.map" />
-    <Content Include="Content\vendor\bootstrap\css\bootstrap.rtl.min.css.map" />
-    <Content Include="Content\vendor\bootstrap\js\bootstrap.bundle.js.map" />
-    <Content Include="Content\vendor\bootstrap\js\bootstrap.bundle.min.js.map" />
-    <Content Include="Content\vendor\bootstrap\js\bootstrap.esm.js.map" />
-    <Content Include="Content\vendor\bootstrap\js\bootstrap.esm.min.js.map" />
-    <Content Include="Content\vendor\bootstrap\js\bootstrap.js.map" />
-    <Content Include="Content\vendor\bootstrap\js\bootstrap.min.js.map" />
-    <Content Include="Content\vendor\swiper\swiper-bundle.min.js.map" />
     <Content Include="Content\webfonts\fa-brands-400.eot" />
     <Content Include="Content\webfonts\fa-brands-400.ttf" />
     <Content Include="Content\webfonts\fa-brands-400.woff" />
@@ -311,6 +315,9 @@
     <Content Include="Scripts\demo\chart-area-demo.js" />
     <Content Include="Scripts\demo\chart-bar-demo.js" />
     <Content Include="Scripts\demo\datatables-demo.js" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\GowBoard20240725110832 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\GowBoard20240725110832 - Web Deploy1.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -332,6 +339,8 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\sb-admin-2.js" />
     <Content Include="Scripts\sb-admin-2.min.js" />
+    <Content Include="Uploads\19221086-3435-4e99-9eab-8ba47a2bc746.png" />
+    <Content Include="Uploads\Thumbnail\19221086-3435-4e99-9eab-8ba47a2bc746Thumb.png" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -364,7 +373,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Uploads\Thumbnail\" />
     <Folder Include="Views\Comment\" />
   </ItemGroup>
   <ItemGroup>
@@ -397,11 +405,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202407241419523_InitialCreate.resx">
-      <DependentUpon>202407241419523_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202407241421042_InitialCreate1.resx">
-      <DependentUpon>202407241421042_InitialCreate1.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202407250543313_InitialCreate.resx">
+      <DependentUpon>202407250543313_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
