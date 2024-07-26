@@ -81,7 +81,6 @@ namespace GowBoard.Models.Service
                 var memberRole = _context.Roles.FirstOrDefault(r => r.RoleName == "member");
                 if (memberRole == null)
                 {
-                    memberRole = new Role { CreatedAt = DateTime.Now };
                     _context.Roles.Add(memberRole);
                     _context.SaveChanges();
                 }

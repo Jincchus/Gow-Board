@@ -141,6 +141,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BoardController.cs" />
     <Compile Include="Controllers\CommentController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MemberController.cs" />
     <Compile Include="Controllers\MyPageController.cs" />
@@ -150,6 +151,10 @@
     <Compile Include="Migrations\202407250543313_InitialCreate.cs" />
     <Compile Include="Migrations\202407250543313_InitialCreate.Designer.cs">
       <DependentUpon>202407250543313_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202407260702393_DeleteRoleCreatedAt.cs" />
+    <Compile Include="Migrations\202407260702393_DeleteRoleCreatedAt.Designer.cs">
+      <DependentUpon>202407260702393_DeleteRoleCreatedAt.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\DTO\RequestDTO\ReqSearchBoardDTO.cs" />
@@ -374,6 +379,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Comment\" />
+    <Folder Include="Views\Error\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
@@ -407,6 +413,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202407250543313_InitialCreate.resx">
       <DependentUpon>202407250543313_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202407260702393_DeleteRoleCreatedAt.resx">
+      <DependentUpon>202407260702393_DeleteRoleCreatedAt.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

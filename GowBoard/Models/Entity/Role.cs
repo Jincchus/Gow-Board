@@ -23,10 +23,6 @@ namespace GowBoard.Models.Entity
         [Column("role_name")]
         public string RoleName { get; set; }
 
-        [Required]
-        [Column("created_at")]
-        public DateTime CreatedAt { get; set; }
-
         public virtual ICollection<MemberRoleMap> MemberRoleMap { get; set; }
     }
 }

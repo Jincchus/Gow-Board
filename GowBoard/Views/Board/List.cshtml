@@ -91,7 +91,10 @@
                                         </td>
                                     }
                                     <td>
-                                        <a href="@Url.Action("DetailView", "Board", new { area = "", id = post.BoardContentId })">@post.Title</a><span>(@post.CommentCount)</span>
+                                        <a href="@Url.Action("DetailView", "Board", new { area = "", id = post.BoardContentId })">@post.Title</a>
+                                        @if (category == "Board") { 
+                                            <span>(@post.CommentCount)</span>
+                                        }
                                     </td>
 
                                     @if (category == "Board")
