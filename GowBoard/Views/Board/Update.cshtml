@@ -15,7 +15,7 @@
                     <h3>자유 게시판</h3>
                 </div>
             </div>
-
+            <input type="hidden" id="Category" name="Category"/>
             <!-- start table -->
             <div class="form mt-5 php-email-form">
 
@@ -276,9 +276,11 @@
                 if (data.success) {
                     document.querySelector('#Title').value = data.title;
                     editor.html.set(data.content);
-
+                    document.querySelector('#Category').value = data.category;
                     boardFileIds = data.boardFiles.map(file => !file.isEditorImage) || [];
-                    console.log("boardFileIds = ", boardFileIds);
+
+                    const categoryTitle = document.querySelector('h3');
+                    categoryTitle.textContent = data.category === 'Notice' ? '공지사항' : '자유 게시판';
 
                     if (fileList) {
                         fileList.innerHTML = '';
