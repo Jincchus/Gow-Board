@@ -64,6 +64,7 @@
     const cancelBtn = document.querySelector(".cancel-btn");
     cancelBtn.addEventListener("click", function () {
         if (confirm("입력된 글이 모두 사라집니다. 리스트로 돌아가시겠습니까?")) {
+            const category = document.querySelector('#Category').value;
             window.location.href = "/Board/List?category=" + category;
         }
     });
