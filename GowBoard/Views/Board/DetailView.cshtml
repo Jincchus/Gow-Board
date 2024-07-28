@@ -82,7 +82,7 @@
                         <!-- ======= Comments ======= -->
                         <div class="comments" style="border-top: 3px solid black;">
                             <div class="form mt-3 php-email-form">
-                                <h5 class="comment-title">Comments(@(Model.TotalCommentCount))</h5>
+                                <h5 class="comment-title">Comments(<span id="comment-count">@(Model.TotalCommentCount)</span>)</h5>
                                 <!-- ======= Comments Form ======= -->
                                 @if (Model.MemberInfoOrRole.Member != null)
                                 {
@@ -220,7 +220,7 @@
 <script src="~/Scripts/board-js/board-comment-ajax.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-
+        let commentCount = parseInt(document.querySelector('#comment-count').textContent);
         document.addEventListener('click', function (e) {
             // 수정 a태그 클릭
             if (e.target.closest('.update-comment-tag')) {
@@ -299,6 +299,9 @@
                             if (data.success) {
                                 var commentElement = document.getElementById('comment-body-' + commentId).closest('.comment, .reply');
                                 commentElement.parentElement.removeChild(commentElement)
+
+                                commentCount--;
+                                document.getElementById('comment-count').textContent = commentCount;
                             } else {
                                 alert(data.message);
                             }

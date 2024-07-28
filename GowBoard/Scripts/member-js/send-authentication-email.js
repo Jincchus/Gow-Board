@@ -46,7 +46,7 @@ emailAuthenticationBtn.addEventListener("click", function () {
         .then(data => {
             const checkNum = document.querySelector("#CheckNum");
             const checkNumbOkBtn = document.querySelector("#CheckNum-ok-btn");
-
+            debugger
             if (data.success) {
                 currentAuthNumber = data.authNumber;
 
