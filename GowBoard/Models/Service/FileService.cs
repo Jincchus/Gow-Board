@@ -1,8 +1,8 @@
 ﻿using GowBoard.Models.Context;
-using GowBoard.Models.DTO.RequestDTO;
 using GowBoard.Models.DTO.ResponseDTO;
 using GowBoard.Models.Entity;
 using GowBoard.Models.Service.Interface;
+using GowBoard.Utility;
 using System;
 using System.Data.Entity;
 using System.Drawing;
@@ -34,6 +34,8 @@ namespace GowBoard.Models.Service
 
                 try
                 {
+                    DateTime koreaNow = DateTimeUtility.GetKoreanNow();
+
                     string originFileName = Path.GetFileName(file.FileName);
                     string saveFileName = Guid.NewGuid().ToString();
                     int fileSize = file.ContentLength;
@@ -45,7 +47,7 @@ namespace GowBoard.Models.Service
                         Extension = extension,
                         OriginFileName = originFileName,
                         SaveFileName = saveFileName,
-                        CreatedAt = DateTime.Now,
+                        CreatedAt = koreaNow,
                         IsEditorImage = isEditorImage,
                     };
 
@@ -152,7 +154,7 @@ namespace GowBoard.Models.Service
 
         public async Task<bool> RemoveFileAsync(int boardFileId)
         {
-            using (var transaction =  _context.Database.BeginTransaction())
+            using (var transaction = _context.Database.BeginTransaction())
             {
                 try
                 {

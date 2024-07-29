@@ -62,6 +62,7 @@ namespace GowBoard.Models.Service
             try
             {
 
+                DateTime koreaNow = DateTimeUtility.GetKoreanNow();
                 string hashedPassword = _passwordHash.HashPassword(registerDto.Password);
 
                 var member = new Member
@@ -72,7 +73,7 @@ namespace GowBoard.Models.Service
                     Email = registerDto.Email,
                     Nickname = registerDto.Nickname,
                     Phone = registerDto.Phone,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = koreaNow
                 };
 
                 _context.Members.Add(member);
@@ -296,11 +297,13 @@ namespace GowBoard.Models.Service
         // 회원 탈퇴
         public void DeleteMember(string memberId)
         {
+            DateTime koreaNow = DateTimeUtility.GetKoreanNow();
+
             var member = _context.Members.FirstOrDefault(m => m.MemberId.Equals(memberId));
             if (member != null)
             {
                 member.DeleteYn = true;
-                member.DeletedAt = DateTime.Now;
+                member.DeletedAt = koreaNow;
                 _context.SaveChanges();
             }
         }

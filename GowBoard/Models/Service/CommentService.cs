@@ -3,6 +3,7 @@ using GowBoard.Models.DTO.RequestDTO;
 using GowBoard.Models.DTO.ResponseDTO;
 using GowBoard.Models.Entity;
 using GowBoard.Models.Service.Interface;
+using GowBoard.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,12 +21,14 @@ namespace GowBoard.Models.Service
 
         public void CreateComment(string memberId, ReqBoardCommentDTO reqBoardCommentDTO)
         {
+            DateTime koreaNow = DateTimeUtility.GetKoreanNow();
+
             var comment = new BoardComment
             {
                 BoardContentId = reqBoardCommentDTO.BoardContentId,
                 WriterId = memberId,
                 Content = reqBoardCommentDTO.Content,
-                CreatedAt = DateTime.Now,
+                CreatedAt = koreaNow,
                 ParentCommentId = reqBoardCommentDTO.ParentCommentId
             };
 
@@ -89,6 +92,7 @@ namespace GowBoard.Models.Service
 
         public void UpdateCommentById(ReqUpdateCommentDTO reqBoardCommentDTO)
         {
+            DateTime koreaNow = DateTimeUtility.GetKoreanNow();
             var comment = _context.BoardCommnets.FirstOrDefault(bc => bc.BoardCommentId == reqBoardCommentDTO.BoardCommentId);
             if (comment == null)
             {
@@ -97,7 +101,7 @@ namespace GowBoard.Models.Service
 
             comment.Content = reqBoardCommentDTO.Content;
             comment.ModifierId = reqBoardCommentDTO.WriterId;
-            comment.ModifiedAt = DateTime.Now;
+            comment.ModifiedAt = koreaNow;
 
             _context.SaveChanges();
         }

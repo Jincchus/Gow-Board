@@ -24,8 +24,8 @@
                         <th scope="col">이메일</th>
                         <th scope="col">휴대폰</th>
                         <th scope="col">등급</th>
-                        <th scope="col">탈퇴 신청 여부</th>
-                        <th scope="col">탈퇴 신청 일자</th>
+                        <th scope="col">탈퇴 여부</th>
+                        <th scope="col">탈퇴 일자</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,7 +42,7 @@
                                 <td> - </td>
                             } else
                             {
-                                <td>member.Phone</td>
+                                <td>@member.Phone</td>
                             }
                             <td>@member.RoleName </td>
                             @if (member.DeleteYn)

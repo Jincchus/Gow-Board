@@ -136,6 +136,7 @@
         const dailyMemberCounts = @Html.Raw(dailyMemberCountsJson);
         const dailyBoardCounts = @Html.Raw(dailyBoardCountsJson);
         const dailyNoticeCounts = @Html.Raw(dailyNoticeCountsJson);
+        debugger
 
         // Parse dates from JSON
         const parsedDates = memberDates.map(date => new Date(date)); 
@@ -203,7 +204,7 @@
                         data: dailyNoticeCounts,
                         borderColor: 'rgba(255, 159, 64, 1)',
                         backgroundColor: 'rgba(255, 159, 64, 0.4)',
-                        borderWidth: 1,
+                        borderWidth: 2,
                         tension: 0.3
                     }
                 ]

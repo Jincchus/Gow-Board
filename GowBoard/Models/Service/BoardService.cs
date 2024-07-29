@@ -4,6 +4,7 @@ using GowBoard.Models.DTO.ResponseDTO;
 using GowBoard.Models.DTO.ResponseDTO.Home;
 using GowBoard.Models.Entity;
 using GowBoard.Models.Service.Interface;
+using GowBoard.Utility;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -26,18 +27,20 @@ namespace GowBoard.Models.Service
             _fileService = uploadService;
         }
 
+
         public async Task CreateBoard(string memberId, string category, ReqBoardDTO createBoardDTO)
         {
             BoardContent board = null;
             try
             {
+                DateTime koreaNow = DateTimeUtility.GetKoreanNow();
                 board = new BoardContent
                 {
                     Category = category,
                     WriterId = memberId,
                     Title = createBoardDTO.Title,
                     Content = createBoardDTO.Content,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = koreaNow
                 };
 
                 _context.BoardContents.Add(board);
@@ -170,7 +173,9 @@ namespace GowBoard.Models.Service
                 }
             }
 
-            query = query.OrderByDescending(bc => bc.CreatedAt);
+            query = query
+                .OrderByDescending(bc => bc.CreatedAt)
+                .ThenByDescending(bc => bc.BoardContentId);
 
             var totalCount = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalCount / (double)searchBoardDTO.PageSize);
@@ -231,6 +236,8 @@ namespace GowBoard.Models.Service
 
             try
             {
+                DateTime koreaNow = DateTimeUtility.GetKoreanNow();
+
                 board = await _context.BoardContents.FindAsync(updateBoardDTO.BoardContentId);
                 if (board == null)
                 {
@@ -253,7 +260,7 @@ namespace GowBoard.Models.Service
                 board.ModifierId = memberId;
                 board.Title = updateBoardDTO.Title;
                 board.Content = updateBoardDTO.Content;
-                board.ModifiedAt = DateTime.Now;
+                board.ModifiedAt = koreaNow;
 
                 await _context.SaveChangesAsync();
 
@@ -329,6 +336,7 @@ namespace GowBoard.Models.Service
             return await _context.BoardContents
                 .Where(bc => bc.Category == "Notice" && bc.CreatedAt >= oneMonth)
                 .OrderByDescending(bc => bc.ViewCount)
+                .ThenByDescending(bc => bc.BoardContentId)
                 .Take(2)
                 .Select(bc => new ResPostRankDTO
                 {
@@ -359,6 +367,7 @@ namespace GowBoard.Models.Service
             return await _context.BoardContents
                 .Where(bc => bc.Category == category)
                 .OrderByDescending(bc => bc.CreatedAt)
+                .ThenByDescending(bc => bc.BoardContentId)
                 .Take(3)
                 .Select(bc => new ResPostRankDTO
                 {
@@ -389,6 +398,7 @@ namespace GowBoard.Models.Service
             return await _context.BoardContents
                 .Where(bc => bc.Category == "Board")
                 .OrderByDescending(bc => bc.ViewCount)
+                .ThenByDescending(bc => bc.BoardContentId)
                 .Take(5)
                 .Select(bc => new ResPostRankDTO
                 {

@@ -196,6 +196,7 @@
     <Compile Include="Models\Service\FileService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\AuthNumberGenerator.cs" />
+    <Compile Include="Utility\DateTimeUtility.cs" />
     <Compile Include="Utility\EmailUtility.cs" />
     <Compile Include="Utility\PasswordHash.cs" />
   </ItemGroup>
@@ -344,8 +345,6 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\sb-admin-2.js" />
     <Content Include="Scripts\sb-admin-2.min.js" />
-    <Content Include="Uploads\19221086-3435-4e99-9eab-8ba47a2bc746.png" />
-    <Content Include="Uploads\Thumbnail\19221086-3435-4e99-9eab-8ba47a2bc746Thumb.png" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -378,6 +377,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Uploads\Thumbnail\" />
     <Folder Include="Views\Comment\" />
     <Folder Include="Views\Error\" />
   </ItemGroup>
