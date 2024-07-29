@@ -201,20 +201,23 @@
         const currentSearch = window.location.search.toLowerCase();
         const navLinks = document.querySelectorAll('#navbar .nav-item a');
 
-        // 기본적으로 Home을 active로 설정
-        let activeLink = document.querySelector('a[data-page="/Home/Index"]');
-        activeLink.classList.add('active');
+        function getCategoryFromUrl() {
+            const urlParams = new URLSearchParams(currentSearch);
+            return urlParams.get('category')?.toLowerCase();
+        }
+
+        const currentCategory = getCategoryFromUrl();
 
         navLinks.forEach(link => {
             const linkPath = link.getAttribute('data-page').toLowerCase();
             const linkCategory = linkPath.split('=')[1]; // 'board' 또는 'notice'
 
             if (currentCategory && linkCategory === currentCategory) {
-                activeLink.classList.remove('active');
                 link.classList.add('active');
-            } else if (currentPath === '/' || currentPath === '/home' || currentPath === '/home/index') {
-                // Home 페이지일 경우
-                activeLink.classList.add('active');
+            } else if ((currentPath === '/' || currentPath === '/home' || currentPath === '/home/index') && linkPath === '/home/index') {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
             }
         });
 

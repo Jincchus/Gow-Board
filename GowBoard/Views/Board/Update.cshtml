@@ -270,6 +270,20 @@
             });
     });
 
+    function updateNavigation(category) {
+        const navLinks = document.querySelectorAll('#navbar .nav-item a');
+        navLinks.forEach(link => {
+            const linkPath = link.getAttribute('data-page').toLowerCase();
+            const linkCategory = linkPath.split('=')[1]; // 'board' 또는 'notice'
+
+            if (linkCategory === category.toLowerCase()) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    }
+
     function editorCall(boardContentId) {
         fetch(`/Board/UpdateData/${boardContentId}`)
             .then(response => response.json())
@@ -282,6 +296,8 @@
 
                     const categoryTitle = document.querySelector('h3');
                     categoryTitle.textContent = data.category === 'Notice' ? '공지사항' : '자유 게시판';
+
+                    updateNavigation(data.category);
 
                     if (fileList) {
                         fileList.innerHTML = '';

@@ -220,7 +220,10 @@
 <script src="~/Scripts/board-js/board-comment-ajax.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        let commentCount = parseInt(document.querySelector('#comment-count').textContent);
+        const currentCateogory = '@Model.BoardContent.Category';
+
+        updateNavigation(currentCateogory);
+
         document.addEventListener('click', function (e) {
             // 수정 a태그 클릭
             if (e.target.closest('.update-comment-tag')) {
@@ -313,6 +316,23 @@
             }
         });
 
+
+
+        function updateNavigation(category) {
+            const navLinks = document.querySelectorAll('#navbar .nav-item a');
+            navLinks.forEach(link => {
+                const linkPath = link.getAttribute('data-page').toLowerCase();
+                const linkCategory = linkPath.split('=')[1]; // 'board' 또는 'notice'
+
+                if (linkCategory === category.toLowerCase()) {
+                    link.classList.add('active');
+                } else if (linkPath === '/home/index' && category.toLowerCase() !== 'oard' && category.toLowerCase() !== 'Notice') {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
 
 
     });
