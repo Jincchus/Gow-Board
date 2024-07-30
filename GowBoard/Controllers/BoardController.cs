@@ -29,6 +29,11 @@ namespace GowBoard.Controllers
             _commentService = commentService;
         }
 
+        protected int? GetRoleId()
+        {
+            return Session["RoleId"] as int?;
+        } 
+
         // GET: Board/Create?category=(category)
         // 글등록 페이지
         public ActionResult Create(string category)
@@ -38,15 +43,12 @@ namespace GowBoard.Controllers
             {
                 string memberId = Session["MemberId"].ToString();
                 var member = _memberService.GetMemberById(memberId);
-                var role = _memberService.GetRoleByMemberId(memberId);
+                var roleId = GetRoleId();
 
-                if (role.RoleName != "admin")
+                if (roleId != 2 && category == "Notice")
                 {
-                    if (category == "Notice")
-                    {
-                        TempData["ErrorMessage"] = "해당 카테고리에 관한 권한이 없습니다.";
+                        TempData["ErrorMessage"] = "해당 카테고리에 관한 등록 권한이 없습니다.";
                         return RedirectToAction("List", "Board", new { category = category });
-                    }
                 }
 
                 if (member != null)
@@ -73,8 +75,8 @@ namespace GowBoard.Controllers
                 return Json(new { success = false, message = "로그인한 회원만 이용 가능합니다." });
             }
             string memberId = Session["MemberId"].ToString();
-            var role = _memberService.GetRoleByMemberId(memberId);
-            if (role.RoleId != 2)
+            var roleId = GetRoleId();
+            if (roleId != 2)
             {
                 if (category == "Notice")
                 {
@@ -163,6 +165,10 @@ namespace GowBoard.Controllers
             ViewBag.SearchType = searchType;
             ViewBag.SearchKeyword = searchKeyword;
 
+            string memberId = Session["MemberId"]?.ToString();
+            var roleId = GetRoleId();
+
+            ViewBag.RoleId = roleId;
             try
             {
                 var searchBoardDTO = new ReqSearchBoardDTO
@@ -174,6 +180,7 @@ namespace GowBoard.Controllers
                     SearchKeyword = searchKeyword
                 };
                 var boardList = await _boardService.SelectAllBoardListAsync(searchBoardDTO);
+
                 
                 return View(Tuple.Create(boardList.BoardList, boardList.TotalCount, boardList.TotalPages));
             }
@@ -269,7 +276,7 @@ namespace GowBoard.Controllers
         {
             string memberId = Session["MemberId"].ToString();
             var member = _memberService.GetMemberById(memberId);
-            var role = _memberService.GetRoleByMemberId(memberId);
+            var roleId = GetRoleId();
             var boardContent = _boardService.GetBoardContentById(id);
 
             if (boardContent == null)
@@ -279,7 +286,7 @@ namespace GowBoard.Controllers
 ;
             if (member != null)
             {
-                if (role.RoleName == "admin" || boardContent.Writer.MemberId == memberId)
+                if (roleId == 2 || boardContent.Writer.MemberId == memberId)
                 {
                     var attachments = boardContent.BoardFiles.Where(f => !f.IsEditorImage)
                                                   .Select(f => new { id = f.BoardFileId, name = f.FileName });
@@ -368,12 +375,13 @@ namespace GowBoard.Controllers
 
                 string memberId = Session["MemberId"].ToString();
                 var member = _memberService.GetMemberById(memberId);
-                var role = _memberService.GetRoleByMemberId(memberId);
+                var roleId = GetRoleId();
                 if (member != null)
                 {
-                    if (role.RoleName == "admin" || boardContent.Writer.MemberId == memberId)
+                    if (roleId == 2 || boardContent.Writer.MemberId == memberId)
                     {
                         await _boardService.DeleteBoardAsync(id);
+                        TempData["SuccessMessage"] = "게시글을 삭제했습니다.";
                         return RedirectToAction("List", new { category = category });
                     }
                     TempData["ErrorMessage"] = "해당 글에 관한 권한이 없습니다.";
@@ -409,10 +417,6 @@ namespace GowBoard.Controllers
             }
         
         }
-
-
-
-
 
     }
 

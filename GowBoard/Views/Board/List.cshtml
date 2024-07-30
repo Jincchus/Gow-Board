@@ -9,6 +9,7 @@
     int totalPages = Model.Item3;
     var errorMessage = TempData["ErrorMessage"] as string;
     var category = ViewBag.category;
+    var roleId = ViewBag.RoleId;
 }
 
 <main id="main">
@@ -32,8 +33,8 @@
                             @if (category == "Board")
                             {
                                 <option value="3">작성자</option>
+                                <option value="4">댓글</option>
                             }
-                            <option value="4">댓글</option>
                         </select>
                     </div>
                     <div class="col-3">
@@ -81,8 +82,8 @@
                                     {
                                         <td>
                                             @if (post.Files != null && post.Files.Count > 0)
-                                            {   
-                                                <img src="~/Uploads/Thumbnail/@post.Files.First().ThumbUrl" alt="Image" style="max-width: 100px; max-height: 100px;" />   
+                                            {
+                                                <img src="~/Uploads/Thumbnail/@post.Files.First().ThumbUrl" alt="Image" style="max-width: 100px; max-height: 100px;" />
                                             }
                                             else
                                             {
@@ -92,7 +93,8 @@
                                     }
                                     <td>
                                         <a href="@Url.Action("DetailView", "Board", new { area = "", id = post.BoardContentId })">@post.Title</a>
-                                        @if (category == "Board") { 
+                                        @if (category == "Board")
+                                        {
                                             <span>(@post.CommentCount)</span>
                                         }
                                     </td>
@@ -118,10 +120,13 @@
                     </div>
                 }
 
-                <!-- TODO : 만약 Role이 admain이 아니면 NOTICE에서는 해당 글쓰기 버튼이 노출되면 안됨-->
-                <div class="text-md-end mt-5">
-                    <a id="create-post-link" href="@Url.Action("Create", new { area = "" })"><button class="btn btn-dark btn-lg">글쓰기</button></a>
-                </div>
+                @if (category == "Notice" && roleId == 2 || category == "Board")
+                {
+                    <div class="text-md-end mt-5">
+                        <a id="create-post-link" href="@Url.Action("Create", new { area = "" })"><button class="btn btn-dark btn-lg">글쓰기</button></a>
+                    </div>
+                }
+
             </div><!-- End table -->
 
             <br>
@@ -155,16 +160,20 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const createPostLink = document.getElementById("create-post-link");
+
+    if (createPostLink) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get('category');
+
+        if (category) {
+            createPostLink.href = createPostLink.href + "?category=" + category;
+        }
+    }
+
     const searchTypeSelect = document.querySelector("select[name='searchType']");
     const searchInput = document.querySelector("input[name='searchKeyword']");
     const searchButton = document.getElementById("searchButton");
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const category = urlParams.get('category');
-
-    if (category) {
-        createPostLink.href = createPostLink.href + "?category=" + category;
-    }
 
     // 초기 검색 상태 설정
     searchTypeSelect.value = "@ViewBag.SearchType";
@@ -183,7 +192,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function performSearch(page) {
         const searchData = {
-            category: category,
+            category: '@category',
             page: page,
             pageSize: @ViewBag.PageSize,
             searchType: searchTypeSelect.value,

@@ -4,7 +4,7 @@
     if (contentDeleteLink) {
         contentDeleteLink.addEventListener('click', function (e) {
             e.preventDefault();
-            if (confirm("정말로 삭제하시겠습니까?")) {
+            if (confirm("게시물을 삭제하시겠습니까?")) {
                 window.location.href = this.getAttribute('href');
             }
         });

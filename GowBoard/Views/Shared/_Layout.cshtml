@@ -1,6 +1,9 @@
 ﻿@{
     var errorMessage = TempData["ErrorMessage"] as string;
     var errorMsg = ViewBag.ErrorMessage;
+    var successMessage = TempData["SuccessMessage"] as string;
+    var successMsg = ViewBag.SuccessMessage;
+    var roleId = Session["RoleId"] as int?;
 }
 
 <!DOCTYPE html>
@@ -91,11 +94,13 @@
                             Notice
                         </a>
                     </li>
+                    @if (roleId.HasValue && roleId.Value == 2) { 
                     <li class="nav-item">
                         <a href="@Url.Action("dashboard", "Admin", new { area = ""})" data-page="/Admin/dashboard">
                             Admin
                         </a>
                     </li>
+                    }
                 </ul>
             </nav><!-- .navbar -->
 
@@ -187,19 +192,24 @@
 
     <script>
         const message = "@errorMessage";
-    
         const msg = "@errorMsg"
+        const successMessage = "@successMessage";
+        const successMsg = "@successMsg";
     document.addEventListener("DOMContentLoaded", function () {
         if (message) {
             alert(message);
         } else if (msg) {
             alert(msg);
+        } else if (successMessage) {
+            alert(successMessage);
+        } else if (successMsg) {
+            alert(successMsg);
         }
 
         // 기본적으로 Home을 active로 설정
         const currentPath = window.location.pathname.toLowerCase();
         const currentSearch = window.location.search.toLowerCase();
-        const navLinks = document.querySelectorAll('#navbar .nav-item a');
+        let navLinks = document.querySelectorAll('#navbar .nav-item a');
 
         function getCategoryFromUrl() {
             const urlParams = new URLSearchParams(currentSearch);

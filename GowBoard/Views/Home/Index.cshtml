@@ -13,20 +13,24 @@
                     <div class="swiper sliderFeaturedPosts">
                         <div class="swiper-wrapper">
                             <div class="swiper-slide">
-                                <a href="#" class="img-bg d-flex align-items-end" style="background-image: url('/Content/img/boardImage (2).jpg');">
+                                <div class="img-bg d-flex align-items-end" style="background-image: url('/Content/img/boardImage (2).jpg');">
                                     <div class="img-bg-inner">
-                                        <h2>Gow Board</h2>
-                                        <p></p>
+                                        <a href="@Url.Action("List", "Board", new { area = "", category="Board"})">
+                                            <h2>자유 게시판 </h2>
+                                            <p>바로가기 ></p>
+                                        </a>
                                     </div>
-                                </a>
+                                </div>
                             </div>
                             <div class="swiper-slide">
-                                <a href="#" class="img-bg d-flex align-items-end" style="background-image: url('/Content/img/BoardImage.jpg');">
+                                <div class="img-bg d-flex align-items-end" style="background-image: url('/Content/img/BoardImage.jpg');">
                                     <div class="img-bg-inner">
-                                        <h2>Gow Board</h2>
-                                        <p></p>
+                                        <a href="@Url.Action("List", "Board", new { area = "", category="Notice"})">
+                                            <h2>공지사항 </h2>
+                                            <p>바로가기 ></p>
+                                        </a>
                                     </div>
-                                </a>
+                                </div>
                             </div>
 
 

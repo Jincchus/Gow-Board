@@ -5,7 +5,7 @@
 <main id="main">
 
     <div class="container" data-aos="fade-up">
-        <section class="single-post-content">
+        <section class="single-post-content" style="min-height:800px;">
 
             <div class="row">
                 <div class="col-lg-12 text-center mb-5">
@@ -15,201 +15,215 @@
                 </div>
             </div>
             <!-- View Start-->
-            <div class="container">
+
+            @if (Model.BoardContent.Category == "Board")
+            {
+                <div class="mb-2">
+                    <a href="@Url.Action("List", "Board", new { area = "", category ="Board" })"> < 목록으로</a>
+                </div>
+            }
+            else if (Model.BoardContent.Category == "Notice")
+            {
+                <div class="mb-2">
+                    <a href="@Url.Action("List", "Board", new { area = "", category ="Notice" })"> < 목록으로</a>
+                </div>
+            }
+
+            <div class="container card" style="min-height:600px; padding-left:80px; padding-right:80px;">
                 <div class="row">
                     <div class=" post-content" data-aos="fade-up">
 
                         <!-- ======= Single Post Content ======= -->
-
-                        <h1 class="mt-5">@Model.BoardContent.Title</h1>            <div class="single-post">
-    <div class="post-meta mb-5">
-        <div class="row">
-            <div class="col-6">
-                <span class="date">@Model.BoardContent.Writer.Nickname</span>
-                <span class="mx-1">|</span>
-                <i class="bi bi-calendar"></i>
-                <span> @Model.BoardContent.FormattedCreatedAt</span>
-            </div>
-            @if (Model.MemberInfoOrRole.Member != null &&
-                (Model.MemberInfoOrRole.Member.MemberId == Model.BoardContent.Writer.MemberId ||
-                (Model.MemberInfoOrRole.Role != null && Model.MemberInfoOrRole.Role.RoleName == "admin")))
-            {
-                <div class="col-6 text-md-end">
-                    <a href="@Url.Action("Update", "Board", new { area = "", id = Model.BoardContent.BoardContentId })">수정</a>
-                    <span class="mx-1">&bullet;</span>
-                    <a href="@Url.Action("Delete", "Board", new { area = "", id = Model.BoardContent.BoardContentId })" id="content-delete-link">삭제</a>
-                </div>
-            }
-            else
-            {
-                <div class="col-6 text-md-end">
-                </div>
-            }
-        </div>
-    </div>
-    <div style="min-height:300px;" class="mb-3">
-        @Html.Raw(Model.BoardContent.Content)
-    </div>
-
-    <div class="card mb-4" >
-        <div class="card-header">
-            첨부파일
-        </div>
-        <ul class="list-group list-group-flush">
-            @if (Model.BoardFiles != null && Model.BoardFiles.Any())
-            {
-                foreach (var file in Model.BoardFiles)
-                {
-                    <li class="list-group-item">
-                        <a href="@Url.Action("DownloadFile", "Board", new { boardFileId = file.BoardFileId })" target="_blank" data-id="@file.BoardFileId">
-                            @file.FileName
-                        </a>
-                    </li>
-                }
-            }
-            else
-            {
-                <li class="list-group-item">
-                    첨부파일이 없습니다.
-                </li>
-            }
-        </ul>
-    </div>
-</div><!-- End Single Post Content -->
-
-                        @if (Model.BoardContent.Category != "Notice") 
-                        {
-                        <!-- ======= Comments ======= -->
-                        <div class="comments" style="border-top: 3px solid black;">
-                            <div class="form mt-3 php-email-form">
-                                <h5 class="comment-title">Comments(<span id="comment-count">@(Model.TotalCommentCount)</span>)</h5>
-                                <!-- ======= Comments Form ======= -->
-                                @if (Model.MemberInfoOrRole.Member != null)
-                                {
-                                    <div class="row justify-content-center mt-3">
-
-                                        <div class="col-lg-12">
-                                            <div class="row">
-                                                <div class="col-lg-10 mb-3">
-                                                    <input type="text" class="form-control" id="ParentComment" placeholder="Add a comment">
-                                                </div>
-                                                <div class="col-lg-2 mb-3">
-                                                    <button type="button" id="comment-ajax-btn" class="btn btn-primary ajax-btn" style="width:100%;"> 등록 </button>
-                                                </div>
-                                            </div>
-                                        </div>
+                        <h1 class="mt-5">@Model.BoardContent.Title</h1>
+                        <div class="single-post">
+                            <div class="post-meta mb-5">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <span class="date">@Model.BoardContent.Writer.Nickname</span>
+                                        <span class="mx-1">|</span>
+                                        <i class="bi bi-calendar"></i>
+                                        <span> @Model.BoardContent.FormattedCreatedAt</span>
                                     </div>
-                                }
-                                else
-                                {
-                                    <p>댓글을 작성하려면 로그인이 필요합니다.</p>
-                                }
-                            </div><!-- End Comments Form -->
-                            <!-- parent1 comment start -->
-                            @foreach (var comment in Model.Comments)
-                            {
-                                <div class="comment d-flex mb-4">
-                                    <div class="flex-grow-1 ms-2 ms-sm-3">
-                                        <div class="comment-meta d-flex align-items-baseline justify-content-between">
-                                            <div class="d-flex align-items-baseline">
-                                                <h6 class="me-2">@comment.Writer.Nickname</h6>
-                                                @if (comment.Writer.MemberId == Model.BoardContent.Writer.MemberId)
-                                                {
-                                                    <span class="text-md-end"> · Writer </span>
-                                                }
-                                            </div>
-                                            <div class="d-flex align-items-center ms-auto">
-                                                @if (Model.MemberInfoOrRole.Member != null &&
-                                                    (Model.MemberInfoOrRole.Member.MemberId == comment.Writer.MemberId ||
-                                                    (Model.MemberInfoOrRole.Role != null && Model.MemberInfoOrRole.Role.RoleId == 2)))
-                                                {
-                                                    <a href="#" class="update-comment-tag" data-comment-id="@comment.BoardCommentId" data-writer-id="@comment.Writer.MemberId"><span class="text-muted">수정</span></a>
-                                                    <span class="mx-1">&bullet;</span>
-                                                    <a href="#" class="delete-comment custom-spacing" data-comment-id="@comment.BoardCommentId"><span class="text-muted">삭제</span></a>
-                                                }
-                                                <span class="text-muted">@comment.FormattedCreatedAt</span>
-                                            </div>
+                                    @if (Model.MemberInfoOrRole.Member != null &&
+                                        (Model.MemberInfoOrRole.Member.MemberId == Model.BoardContent.Writer.MemberId ||
+                                        (Model.MemberInfoOrRole.Role != null && Model.MemberInfoOrRole.Role.RoleName == "admin")))
+                                    {
+                                        <div class="col-6 text-md-end">
+                                            <a href="@Url.Action("Update", "Board", new { area = "", id = Model.BoardContent.BoardContentId })">수정</a>
+                                            <span class="mx-1">&bullet;</span>
+                                            <a href="@Url.Action("Delete", "Board", new { area = "", id = Model.BoardContent.BoardContentId })" id="content-delete-link">삭제</a>
                                         </div>
-                                        <div class="comment-body" id="comment-body-@comment.BoardCommentId">
-                                            @comment.Content
+                                    }
+                                    else
+                                    {
+                                        <div class="col-6 text-md-end">
                                         </div>
-
-                                        <!-- 대댓글 작성란 토글 시작-->
-                                        <div class="text-md-end">
-                                            <i class="bi bi-chat-dots"></i><span class="custom-spacing"> @(comment.Replies?.Count ?? 0)</span>
-
-                                            @if (Model.MemberInfoOrRole.Member != null )
-                                            {
-                                                <a href="#" class="bi-pencil-fill" data-comment-id="@comment.BoardCommentId"></a> <!-- 대댓글 작성 버튼 -->
-                                            }
-                                            </div>
-
-                                        <!-- 대댓글 등록창 -->
-                                        @if (Model.MemberInfoOrRole.Member != null)
-                                        {
-                                            <div id="reply-form-container-@comment.BoardCommentId" class="row comment-form-container" style="display:none;">
-                                                <div class="col-lg-10 mb-3">
-                                                    <input type="text" class="form-control ChildComment" id="reply-input-@comment.BoardCommentId" placeholder="Add a reply">
-                                                </div>
-                                                <div class="col-lg-2 mb-3">
-                                                    <button type="button" class="btn btn-primary ajax-btn reply-comment-btn" style="width:100%;" data-parent-comment-id="@comment.BoardCommentId"> 등록 </button>
-                                                </div>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <p>대댓글을 작성하려면 로그인이 필요합니다.</p>
-                                        }
-                                        <!-- 대댓글 작성란 끝-->
-                                        <!-- parent1's child comment start -->
-                                        @if (comment.Replies != null && comment.Replies.Any())
-                                        {
-                                            <div class="comment-replies bg-light p-3 mt-3 rounded">
-                                                @foreach (var reply in comment.Replies)
-                                                {
-                                                    <div class="reply d-flex mb-4">
-                                                        <div class="flex-grow-1 ms-2 ms-sm-3">
-                                                            <div class="reply-meta d-flex align-items-baseline justify-content-between">
-                                                                <div class="d-flex align-items-baseline">
-                                                                    <h6 class="mb-0 me-2">@reply.Writer.Nickname</h6>
-                                                                    @if (comment.Writer.MemberId == Model.BoardContent.Writer.MemberId)
-                                                                    {
-                                                                        <span class="text-muted">· writer</span>
-                                                                    }
-                                                                </div>
-                                                                <div class="d-flex align-items-center ms-auto">
-
-                                                                    @if (Model.MemberInfoOrRole.Member != null &&
-                                                                        (Model.MemberInfoOrRole.Member.MemberId == comment.Writer.MemberId ||
-                                                                        (Model.MemberInfoOrRole.Role != null && Model.MemberInfoOrRole.Role.RoleId == 2)))
-                                                                    {
-                                                                        <a href="#" class="update-comment-tag" data-comment-id="@reply.BoardCommentId" data-writer-id="@reply.Writer.MemberId"><span class="text-muted">수정</span></a>
-                                                                        <span class="mx-1">&bullet;</span>
-                                                                        <a href="#" class="delete-comment custom-spacing" data-comment-id="@reply.BoardCommentId"><span class="text-muted">삭제</span></a>
-                                                                    }
-                                                                    <span class="text-muted">@reply.FormattedCreatedAt</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="reply-body" id="comment-body-@reply.BoardCommentId">
-                                                                @reply.Content
-                                                            </div>
-                                                            <hr>
-                                                        </div>
-                                                    </div>
-
-                                                }
-                                            </div>
-                                        }
-
-                                        <!-- parent1's child comment end-->
-                                    </div>
+                                    }
                                 </div>
+                                <hr />
+                            </div>
+                            <div style="min-height:300px;" class="mb-3">
+                                @Html.Raw(Model.BoardContent.Content)
+                            </div>
 
+                            @if (Model.BoardFiles != null && Model.BoardFiles.Any())
+                            {
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        첨부파일
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        @foreach (var file in Model.BoardFiles)
+                                        {
+                                            <li class="list-group-item">
+                                                <a href="@Url.Action("DownloadFile", "Board", new { boardFileId = file.BoardFileId })" target="_blank" data-id="@file.BoardFileId">
+                                                    <i class="bi bi-download">
+                                                        @file.FileName
+                                                    </i>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
                             }
-                        </div><!-- End Comments -->
-                        }
+                        </div><!-- End Single </P>ost Content -->
                     </div>
                 </div>
+            </div>
+
+        </section>
+        <section style="margin-top:-40px;">
+                @if (Model.BoardContent.Category != "Notice")
+                {
+                    <!-- ======= Comments ======= -->
+                    <div class="comments" style="border-top: 3px solid black;">
+                        <div class="form mt-3 php-email-form">
+                            <h5 class="comment-title">Comments(<span id="comment-count">@(Model.TotalCommentCount)</span>)</h5>
+                            <!-- ======= Comments Form ======= -->
+                            @if (Model.MemberInfoOrRole.Member != null)
+                            {
+                                <div class="row justify-content-center mt-3">
+
+                                    <div class="col-lg-12">
+                                        <div class="row">
+                                            <div class="col-lg-10 mb-3">
+                                                <input type="text" class="form-control" id="ParentComment" placeholder="Add a comment">
+                                            </div>
+                                            <div class="col-lg-2 mb-3">
+                                                <button type="button" id="comment-ajax-btn" class="btn btn-primary ajax-btn" style="width:100%;"> 등록 </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <p>댓글을 작성하려면 로그인이 필요합니다.</p>
+                            }
+                        </div><!-- End Comments Form -->
+                        <!-- parent1 comment start -->
+                        @foreach (var comment in Model.Comments)
+                        {
+                            <div class="comment d-flex mb-4">
+                                <div class="flex-grow-1 ms-2 ms-sm-3">
+                                    <div class="comment-meta d-flex align-items-baseline justify-content-between">
+                                        <div class="d-flex align-items-baseline">
+                                            <h6 class="me-2">@comment.Writer.Nickname</h6>
+                                            @if (comment.Writer.MemberId == Model.BoardContent.Writer.MemberId)
+                                            {
+                                                <span class="text-md-end"> · Writer </span>
+                                            }
+                                        </div>
+                                        <div class="d-flex align-items-center ms-auto">
+                                            @if (Model.MemberInfoOrRole.Member != null &&
+                                                (Model.MemberInfoOrRole.Member.MemberId == comment.Writer.MemberId ||
+                                                (Model.MemberInfoOrRole.Role != null && Model.MemberInfoOrRole.Role.RoleId == 2)))
+                                            {
+                                                <a href="#" class="update-comment-tag" data-comment-id="@comment.BoardCommentId" data-writer-id="@comment.Writer.MemberId"><span class="text-muted">수정</span></a>
+                                                <span class="mx-1">&bullet;</span>
+                                                <a href="#" class="delete-comment custom-spacing" data-comment-id="@comment.BoardCommentId"><span class="text-muted">삭제</span></a>
+                                            }
+                                            <span class="text-muted">@comment.FormattedCreatedAt</span>
+                                        </div>
+                                    </div>
+                                    <div class="comment-body" id="comment-body-@comment.BoardCommentId">
+                                        @comment.Content
+                                    </div>
+
+                                    <!-- 대댓글 작성란 토글 시작-->
+                                    <div class="text-md-end">
+                                        <i class="bi bi-chat-dots"></i><span class="custom-spacing"> @(comment.Replies?.Count ?? 0)</span>
+
+                                        @if (Model.MemberInfoOrRole.Member != null)
+                                        {
+                                            <a href="#" class="bi-pencil-fill" data-comment-id="@comment.BoardCommentId"></a> <!-- 대댓글 작성 버튼 -->
+                                        }
+                                    </div>
+
+                                    <!-- 대댓글 등록창 -->
+                                    @if (Model.MemberInfoOrRole.Member != null)
+                                    {
+                                        <div id="reply-form-container-@comment.BoardCommentId" class="row comment-form-container" style="display:none;">
+                                            <div class="col-lg-10 mb-3">
+                                                <input type="text" class="form-control ChildComment" id="reply-input-@comment.BoardCommentId" placeholder="Add a reply">
+                                            </div>
+                                            <div class="col-lg-2 mb-3">
+                                                <button type="button" class="btn btn-primary ajax-btn reply-comment-btn" style="width:100%;" data-parent-comment-id="@comment.BoardCommentId"> 등록 </button>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p>대댓글을 작성하려면 로그인이 필요합니다.</p>
+                                    }
+                                    <!-- 대댓글 작성란 끝-->
+                                    <!-- parent1's child comment start -->
+                                    @if (comment.Replies != null && comment.Replies.Any())
+                                    {
+                                        <div class="comment-replies bg-light p-3 mt-3 rounded">
+                                            @foreach (var reply in comment.Replies)
+                                            {
+                                                <div class="reply d-flex mb-4">
+                                                    <div class="flex-grow-1 ms-2 ms-sm-3">
+                                                        <div class="reply-meta d-flex align-items-baseline justify-content-between">
+                                                            <div class="d-flex align-items-baseline">
+                                                                <h6 class="mb-0 me-2">@reply.Writer.Nickname</h6>
+                                                                @if (comment.Writer.MemberId == Model.BoardContent.Writer.MemberId)
+                                                                {
+                                                                    <span class="text-muted">· writer</span>
+                                                                }
+                                                            </div>
+                                                            <div class="d-flex align-items-center ms-auto">
+
+                                                                @if (Model.MemberInfoOrRole.Member != null &&
+                                                                    (Model.MemberInfoOrRole.Member.MemberId == comment.Writer.MemberId ||
+                                                                    (Model.MemberInfoOrRole.Role != null && Model.MemberInfoOrRole.Role.RoleId == 2)))
+                                                                {
+                                                                    <a href="#" class="update-comment-tag" data-comment-id="@reply.BoardCommentId" data-writer-id="@reply.Writer.MemberId"><span class="text-muted">수정</span></a>
+                                                                    <span class="mx-1">&bullet;</span>
+                                                                    <a href="#" class="delete-comment custom-spacing" data-comment-id="@reply.BoardCommentId"><span class="text-muted">삭제</span></a>
+                                                                }
+                                                                <span class="text-muted">@reply.FormattedCreatedAt</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="reply-body" id="comment-body-@reply.BoardCommentId">
+                                                            @reply.Content
+                                                        </div>
+                                                        <hr>
+                                                    </div>
+                                                </div>
+
+                                            }
+                                        </div>
+                                    }
+
+                                    <!-- parent1's child comment end-->
+                                </div>
+                            </div>
+
+                        }
+                    </div><!-- End Comments -->
+                }
                 <!-- View End-->
         </section>
     </div>
@@ -282,7 +296,7 @@
                     });
             }
 
-            // 삭제 클릭
+            // 댓글 삭제 클릭
             if (e.target.closest('.delete-comment')) {
                 e.preventDefault();
                 var commentId = e.target.closest('.delete-comment').dataset.commentId;
@@ -316,25 +330,32 @@
             }
         });
 
-
-
+        const currentCategory = '@Model.BoardContent.Category';
         function updateNavigation(category) {
-            const navLinks = document.querySelectorAll('#navbar .nav-item a');
-            navLinks.forEach(link => {
-                const linkPath = link.getAttribute('data-page').toLowerCase();
-                const linkCategory = linkPath.split('=')[1]; // 'board' 또는 'notice'
+            let navLinks = document.querySelectorAll('#navbar .nav-item a');
 
-                if (linkCategory === category.toLowerCase()) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+
+                if ((category === 'Board' && link.textContent.trim() === 'Board') ||
+                    (category === 'Notice' && link.textContent.trim() === 'Notice')) {
                     link.classList.add('active');
-                } else if (linkPath === '/home/index' && category.toLowerCase() !== 'oard' && category.toLowerCase() !== 'Notice') {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
+
+                    // 이벤트 리스너 추가
+                    link.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        navLinks.forEach(l => l.classList.remove('active'));
+                        this.classList.add('active');
+                    });
                 }
             });
         }
 
+        updateNavigation(currentCategory);
 
+        setTimeout(() => {
+            updateNavigation(currentCategory);
+        }, 2);
     });
 
 </script>

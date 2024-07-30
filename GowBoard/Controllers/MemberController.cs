@@ -119,7 +119,10 @@ namespace GowBoard.Controllers
             }
 
             Session["MemberId"] = loginResult.Member.MemberId;
-            
+
+            var role = _memberService.GetRoleByMemberId(loginResult.Member.MemberId);
+            Session["RoleId"] = role.RoleId;
+
             return RedirectToAction("Index", "Home");
 
         }
@@ -129,6 +132,7 @@ namespace GowBoard.Controllers
         public ActionResult LogOut()
         {
             Session.Remove("MemberId");
+            Session.Remove("RoleId");
             return RedirectToAction("LogIn", "Member");
 
         }
