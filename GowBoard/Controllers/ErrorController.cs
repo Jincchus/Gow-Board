@@ -28,6 +28,8 @@ namespace GowBoard.Controllers
                     return "접근이 금지되었습니다.";
                 case 404:
                     return "페이지를 찾을 수 없습니다.";
+                case 413:
+                    return "파일 크기가 최대 파일 사이즈를 초과했습니다.";
                 case 500:
                     return "서버 오류입니다.";
                 default:
@@ -47,6 +49,8 @@ namespace GowBoard.Controllers
                     return "이 페이지에 대한 접근 권한이 없습니다.";
                 case 404:
                     return "요청하신 페이지를 찾을 수 없습니다. URL을 확인하시고 다시 시도해 주세요.";
+                case 413:
+                    return "해당 파일 크기와 업로드 가능한 파일크기를 확인하시고 다시 시도해 주세요.";
                 case 500:
                     return "서버에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
                 default:

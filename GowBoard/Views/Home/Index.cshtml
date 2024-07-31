@@ -60,7 +60,7 @@
                         <a href="@Url.Action("DetailView", "Board", new { area = "", id = topNotice.BoardContentId })">
                             @if (topNotice.Files != null)
                             {
-                                <img src="~/Uploads/@topNotice.Files.ThumbUrl" alt="" class="img-fluid top-view-notice">
+                                <img src="@topNotice.Files.ThumbUrl" alt="" class="img-fluid top-view-notice">
                             }
                             else
                             {
@@ -84,7 +84,7 @@
                                 <a href="@Url.Action("DetailView", "Board", new { area = "", id = newBoard.BoardContentId })">
                                     @if (newBoard.Files != null)
                                     {
-                                        <img src="~/Uploads/@newBoard.Files.ThumbUrl" alt="" class="img-fluid new-board">
+                                        <img src="@newBoard.Files.ThumbUrl" alt="" class="img-fluid new-board">
                                     }
                                     else
                                     {
@@ -109,7 +109,7 @@
                                 <a href="@Url.Action("DetailView", "Board", new { area = "", id = newNotice.BoardContentId })">
                                     @if (newNotice.Files != null)
                                     {
-                                        <img src="~/Uploads/@newNotice.Files.ThumbUrl" alt="" class="img-fluid new-board">
+                                        <img src="@newNotice.Files.ThumbUrl" alt="" class="img-fluid new-board">
                                     }
                                     else
                                     {
@@ -152,15 +152,3 @@
 
 
 </main><!-- End #main -->
-
-<script>
-    var successMessage = "@TempData["SuccessMessage"]";
-
-    console.log = successMessage
-
-    if (successMessage) {
-        alert(successMessage);
-    }
-
-</script>
-    

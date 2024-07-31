@@ -43,6 +43,8 @@
     <link href="~/Content/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
     <link href="~/Content/vendor/aos/aos.css" rel="stylesheet">
 
+
+
     <style>
         .nav-item a.active {
             font-weight: bold !important;
@@ -50,10 +52,9 @@
         }
 
         .nav-item :hover {
-            font-weight: bold ;
+            font-weight: bold;
             text-decoration: underline !important;
         }
-
     </style>
 
     <!-- =======================================================
@@ -94,12 +95,13 @@
                             Notice
                         </a>
                     </li>
-                    @if (roleId.HasValue && roleId.Value == 2) { 
-                    <li class="nav-item">
-                        <a href="@Url.Action("dashboard", "Admin", new { area = ""})" data-page="/Admin/dashboard">
-                            Admin
-                        </a>
-                    </li>
+                    @if (roleId.HasValue && roleId.Value == 2)
+                    {
+                        <li class="nav-item">
+                            <a href="@Url.Action("dashboard", "Admin", new { area = ""})" data-page="/Admin/dashboard">
+                                Admin
+                            </a>
+                        </li>
                     }
                 </ul>
             </nav><!-- .navbar -->
@@ -119,11 +121,24 @@
                     }
                     else
                     {
+                        <nav id="navbar" class="navbar">
+                            <ul>
+                                <li class="dropdown">
+                                    <a href="@Url.Action("MyProfile", "MyPage", new { area = "" })">
+                                        <span>
+                                            <i class="bi bi-chevron-down dropdown-indicator"></i>
+                                            <span>@Session["Nickname"]님, 반갑습니다.</span>
+                                        </span>
+                                    </a>
+                                    <ul>
+                                        <li><a href="@Url.Action("MyProfile", "MyPage", new { area = "" })">MyPage</a></li>
+                                        <li><a href="@Url.Action("Logout", "Member", new { area = "" })">Logout</a></li>
+                                    </ul>
+                                </li>
 
-                        <a href="@Url.Action("MyProfile", "MyPage", new { area = "" })">
-                            <i class="bi bi-person-circle" style="font-size:40px; margin-right: 20px"></i>
+                            </ul>
+                        </nav><!-- .navbar -->
 
-                        </a>
                     }
 
                 </div>
@@ -179,14 +194,15 @@
 
     </footer>
 
+    <!-- Bootstrap Js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Vendor JS Files -->
     <script src="~/Content/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="~/Content/vendor/swiper/swiper-bundle.min.js"></script>
     <script src="~/Content/vendor/glightbox/js/glightbox.min.js"></script>
     <script src="~/Content/vendor/aos/aos.js"></script>
-    <!--
-    <script src="~/Content/vendor/php-email-form/validate.js"></script>-->
+
     <!-- Template Main JS File -->
     <script src="~/Scripts/main.js"></script>
 
@@ -195,6 +211,7 @@
         const msg = "@errorMsg"
         const successMessage = "@successMessage";
         const successMsg = "@successMsg";
+
     document.addEventListener("DOMContentLoaded", function () {
         if (message) {
             alert(message);
@@ -231,6 +248,11 @@
             }
         });
 
+        // dropdown
+        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+        var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl)
+        })
     });
     </script>
 

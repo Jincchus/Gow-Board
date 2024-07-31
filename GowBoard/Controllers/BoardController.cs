@@ -1,11 +1,8 @@
 ﻿using GowBoard.Models.DTO.RequestDTO;
 using GowBoard.Models.DTO.ResponseDTO;
-using GowBoard.Models.Entity;
 using GowBoard.Models.Service.Interface;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
@@ -32,7 +29,7 @@ namespace GowBoard.Controllers
         protected int? GetRoleId()
         {
             return Session["RoleId"] as int?;
-        } 
+        }
 
         // GET: Board/Create?category=(category)
         // 글등록 페이지
@@ -47,8 +44,8 @@ namespace GowBoard.Controllers
 
                 if (roleId != 2 && category == "Notice")
                 {
-                        TempData["ErrorMessage"] = "해당 카테고리에 관한 등록 권한이 없습니다.";
-                        return RedirectToAction("List", "Board", new { category = category });
+                    TempData["ErrorMessage"] = "해당 카테고리에 관한 등록 권한이 없습니다.";
+                    return RedirectToAction("List", "Board", new { category = category });
                 }
 
                 if (member != null)
@@ -57,7 +54,7 @@ namespace GowBoard.Controllers
                 }
                 ViewBag.ErrorMessage = "잘못된 접근입니다.";
                 return View("Create");
-                
+
             }
             TempData["ErrorMessage"] = "로그인한 회원만 이용 가능한 페이지입니다.";
             return RedirectToAction("Login", "Member");
@@ -106,7 +103,7 @@ namespace GowBoard.Controllers
         {
             if (file != null && file.ContentLength > 0)
             {
-                const int maxFileSize = 20 * 1024 * 1024; // 20MB in bytes
+                const int maxFileSize = 20 * 1024 * 1024;
                 if (file.ContentLength > maxFileSize)
                 {
                     return Json(new { success = false, message = "20MB이상 크기의 파일을 첨부 할 수 없습니다." });
@@ -125,6 +122,14 @@ namespace GowBoard.Controllers
 
                     return Json(response, "application/json");
 
+                }
+                catch (HttpException ex)
+                {
+                    if (ex.GetHttpCode() == 413)
+                    {
+                        return Json(new { success = false, message = "업로드 가능한 파일 크기를 초과했습니다. 20MB 이하의 파일을 업로드해주세요." });
+                    }
+                    return Json(new { success = false, message = "파일 업로드 중 오류가 발생했습니다." });
                 }
                 catch (Exception ex)
                 {
@@ -181,7 +186,7 @@ namespace GowBoard.Controllers
                 };
                 var boardList = await _boardService.SelectAllBoardListAsync(searchBoardDTO);
 
-                
+
                 return View(Tuple.Create(boardList.BoardList, boardList.TotalCount, boardList.TotalPages));
             }
             catch (Exception ex)
@@ -228,7 +233,7 @@ namespace GowBoard.Controllers
             var role = memberId != null ? _memberService.GetRoleByMemberId(memberId) : null;
 
             var boardContent = _boardService.GetBoardContentById(id.Value);
-            var boardComments =  _commentService.GetBoardCommentListByContentId(id.Value);
+            var boardComments = _commentService.GetBoardCommentListByContentId(id.Value);
             var totalCommentCount = _commentService.GetTotalCommentCount(id.Value);
 
             if (boardContent == null)
@@ -404,18 +409,18 @@ namespace GowBoard.Controllers
                 var result = await _fileService.RemoveFileAsync(boardFileId);
                 if (result)
                 {
-                    return Json(new { success = true, message ="파일이 성공적으로 삭제되었습니다." });
+                    return Json(new { success = true, message = "파일이 성공적으로 삭제되었습니다." });
                 }
                 else
                 {
                     return Json(new { success = false, messsage = "파일을 찾을 수 없거나 이미 삭제된 파일입니다." });
-                } 
+                }
             }
             catch (Exception ex)
             {
                 return Json(new { success = false, message = $"파일 삭제 중 오류가 발생했습니다: {ex.Message}" });
             }
-        
+
         }
 
     }

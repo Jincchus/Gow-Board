@@ -119,9 +119,11 @@ namespace GowBoard.Controllers
             }
 
             Session["MemberId"] = loginResult.Member.MemberId;
+            Session["Nickname"] = loginResult.Member.Nickname;
 
             var role = _memberService.GetRoleByMemberId(loginResult.Member.MemberId);
             Session["RoleId"] = role.RoleId;
+
 
             return RedirectToAction("Index", "Home");
 
@@ -133,6 +135,7 @@ namespace GowBoard.Controllers
         {
             Session.Remove("MemberId");
             Session.Remove("RoleId");
+            Session.Remove("Nickname");
             return RedirectToAction("LogIn", "Member");
 
         }

@@ -83,7 +83,7 @@
                                         <td>
                                             @if (post.Files != null && post.Files.Count > 0)
                                             {
-                                                <img src="~/Uploads/Thumbnail/@post.Files.First().ThumbUrl" alt="Image" style="max-width: 100px; max-height: 100px;" />
+                                                <img src="@post.Files.First().ThumbUrl" alt="Image" style="max-width: 100px; max-height: 100px;" />
                                             }
                                             else
                                             {

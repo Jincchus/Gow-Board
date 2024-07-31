@@ -144,11 +144,26 @@
 
     fileUpload.addEventListener('change', async function (event) {
         const files = event.target.files;
+
+
+        // Create a FileReader to read the file content
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            // e.target.result contains the file binary data
+            console.log('File content as binary data:', e.target.result);
+        };
+
+        // Read the file as ArrayBuffer to get binary data
+        reader.readAsArrayBuffer(file);
+
+
         for (let file of files) {
             if (file.size > maxFileSize) {
                 alert('20MB이상 크기의 파일을 첨부 할 수 없습니다.');
                 continue; // Skip this file
             }
+
             try {
                 const formData = new FormData();
                 formData.append('file', file);

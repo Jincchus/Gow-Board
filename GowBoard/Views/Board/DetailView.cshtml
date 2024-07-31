@@ -343,7 +343,6 @@
 
                     // 이벤트 리스너 추가
                     link.addEventListener('click', function (e) {
-                        e.preventDefault();
                         navLinks.forEach(l => l.classList.remove('active'));
                         this.classList.add('active');
                     });

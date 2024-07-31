@@ -8,5 +8,6 @@ namespace GowBoard.Models.DTO.ResponseDTO
         public string FileName { get; set; }
         public int BoardFileId { get; set; }
         public bool IsEditorImage { get; set; }
+        public string Url { get; set; }
     }
 }

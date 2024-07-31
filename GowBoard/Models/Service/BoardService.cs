@@ -1,4 +1,5 @@
-﻿using GowBoard.Models.Context;
+﻿using Azure.Storage.Blobs;
+using GowBoard.Models.Context;
 using GowBoard.Models.DTO.RequestDTO;
 using GowBoard.Models.DTO.ResponseDTO;
 using GowBoard.Models.DTO.ResponseDTO.Home;
@@ -7,6 +8,7 @@ using GowBoard.Models.Service.Interface;
 using GowBoard.Utility;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
 using System.Linq;
@@ -18,13 +20,32 @@ namespace GowBoard.Models.Service
     {
         private readonly GowBoardContext _context;
         private readonly IFileService _fileService;
-        private readonly IMemberService _memberService;
-        private readonly ICommentService _commentService;
+        private readonly string _connectionString;
+        private readonly string _containerName;
+        private readonly string _thumbnailContainerName;
 
         public BoardService(GowBoardContext context, IFileService uploadService)
         {
             _context = context;
             _fileService = uploadService;
+
+            _connectionString = ConfigurationManager.AppSettings["AzureStorageConnectionString"];
+            if (string.IsNullOrEmpty(_connectionString))
+            {
+                throw new ArgumentNullException(nameof(_connectionString), "The connection string is null or empty. Please check your Web.config file.");
+            }
+
+            _containerName = ConfigurationManager.AppSettings["AzureStorageContainerName"];
+            if (string.IsNullOrEmpty(_containerName))
+            {
+                throw new ArgumentNullException(nameof(_containerName), "The container name is null or empty. Please check your Web.config file.");
+            }
+
+            _thumbnailContainerName = ConfigurationManager.AppSettings["AzureStorageThumbnailContainerName"];
+            if (string.IsNullOrEmpty(_thumbnailContainerName))
+            {
+                throw new ArgumentNullException(nameof(_thumbnailContainerName), "The thumbnail container name is null or empty.");
+            }
         }
 
 
@@ -106,11 +127,13 @@ namespace GowBoard.Models.Service
                         Nickname = b.Writer.Nickname
                     },
                     CreatedAt = b.CreatedAt,
-                    BoardFiles = b.BoardFiles.Select(f => new ResFileResult
+                    BoardFiles = b.BoardFiles.Select(f => new
                     {
                         BoardFileId = f.BoardFileId,
                         FileName = f.OriginFileName,
-                        IsEditorImage = f.IsEditorImage
+                        IsEditorImage = f.IsEditorImage,
+                        SaveFileName = f.SaveFileName,
+                        Extension = f.Extension
                     }).ToList()
                 })
                 .FirstOrDefault();
@@ -120,7 +143,6 @@ namespace GowBoard.Models.Service
                 return null;
             }
 
-
             var boardContent = new ResBoardDetailDTO
             {
                 BoardContentId = boardContentData.BoardContentId,
@@ -129,11 +151,16 @@ namespace GowBoard.Models.Service
                 Writer = boardContentData.Writer,
                 Category = boardContentData.Category,
                 CreatedAt = boardContentData.CreatedAt,
-                BoardFiles = boardContentData.BoardFiles
+                BoardFiles = boardContentData.BoardFiles.Select(f => new ResFileResult
+                {
+                    BoardFileId = f.BoardFileId,
+                    FileName = f.FileName,
+                    IsEditorImage = f.IsEditorImage,
+                    Url = GetBlobUrl(_containerName, f.SaveFileName + f.Extension)
+                }).ToList()
             };
 
             return boardContent;
-
         }
 
         public async Task<(List<ResBoardListDTO> BoardList, int TotalCount, int TotalPages)> SelectAllBoardListAsync(ReqSearchBoardDTO searchBoardDTO)
@@ -168,7 +195,7 @@ namespace GowBoard.Models.Service
                             bc.Content.Contains(searchBoardDTO.SearchKeyword) ||
                             bc.Writer.Nickname.Contains(searchBoardDTO.SearchKeyword) ||
                             bc.BoardComments.Any(c => c.Content.Contains(searchBoardDTO.SearchKeyword)));
-                        
+
                         break;
                 }
             }
@@ -183,33 +210,64 @@ namespace GowBoard.Models.Service
             var boardContents = await query
                 .Skip((searchBoardDTO.Page - 1) * searchBoardDTO.PageSize)
                 .Take(searchBoardDTO.PageSize)
-                .Select(bc => new ResBoardListDTO
+                .Select(bc => new
                 {
-                    BoardContentId = bc.BoardContentId,
-                    Title = bc.Title,
-                    ViewCount = bc.ViewCount,
-                    Writer = new ResWriterDTO
+                    bc.BoardContentId,
+                    bc.Title,
+                    bc.ViewCount,
+                    Writer = new
                     {
-                        MemberId = bc.Writer.MemberId,
-                        Nickname = bc.Writer.Nickname,
+                        bc.Writer.MemberId,
+                        bc.Writer.Nickname
                     },
-                    CreatedAt = bc.CreatedAt,
+                    bc.CreatedAt,
                     Files = bc.BoardFiles
                         .Where(bf => new[] { ".png", ".jpg", ".jpeg", ".gif", ".bmp" }.Contains(bf.Extension.ToLower()))
                         .OrderByDescending(bf => bf.BoardFileId)
                         .Take(1)
-                        .Select(bf => new ResBoardFileDTO
+                        .Select(bf => new
                         {
-                            ThumbUrl = bf.SaveFileName + "Thumb" + bf.Extension,
-                            FileName = bf.SaveFileName,
-                            Extension = bf.Extension,
-                            FileSize = bf.FileSize,
-                        }).ToList(),
+                            bf.SaveFileName,
+                            bf.Extension,
+                            bf.FileSize
+                        })
+                        .ToList(),
                     CommentCount = bc.BoardComments.Count(),
                 })
                 .ToListAsync();
 
-            return (boardContents,totalCount ,totalPages);
+            var boardList = boardContents.Select(bc => new ResBoardListDTO
+            {
+                BoardContentId = bc.BoardContentId,
+                Title = bc.Title,
+                ViewCount = bc.ViewCount,
+                Writer = new ResWriterDTO
+                {
+                    MemberId = bc.Writer.MemberId,
+                    Nickname = bc.Writer.Nickname,
+                },
+                CreatedAt = bc.CreatedAt,
+                Files = bc.Files
+                    .Select(bf => new ResBoardFileDTO
+                    {
+                        ThumbUrl = GetBlobUrl(_thumbnailContainerName, bf.SaveFileName + "Thumb" + bf.Extension),
+                        FileName = bf.SaveFileName,
+                        Extension = bf.Extension,
+                        FileSize = bf.FileSize,
+                    }).ToList(),
+                CommentCount = bc.CommentCount,
+            }).ToList();
+
+            return (boardList, totalCount, totalPages);
+        }
+
+        private string GetBlobUrl(string containerName, string fileName)
+        {
+            var blobServiceClient = new BlobServiceClient(_connectionString);
+            var blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
+            var blobClient = blobContainerClient.GetBlobClient(fileName);
+
+            return blobClient.Uri.ToString();
         }
 
         public async Task<int> GetTotalCountAsync(string caregory)
@@ -333,64 +391,96 @@ namespace GowBoard.Models.Service
         {
             var oneMonth = DateTime.Now.AddMonths(-1);
 
-            return await _context.BoardContents
+            var topNotices = await _context.BoardContents
                 .Where(bc => bc.Category == "Notice" && bc.CreatedAt >= oneMonth)
                 .OrderByDescending(bc => bc.ViewCount)
                 .ThenByDescending(bc => bc.BoardContentId)
                 .Take(2)
-                .Select(bc => new ResPostRankDTO
+                .Select(bc => new
                 {
-                    BoardContentId = bc.BoardContentId,
-                    Title = bc.Title,
-                    CreatedAt = bc.CreatedAt,
-                    Category = bc.Category,
-                    Writer = new ResWriterDTO
-                    {
-                        MemberId = bc.WriterId,
-                        Nickname = bc.Writer.Nickname
-                    },
+                    bc.BoardContentId,
+                    bc.Title,
+                    bc.CreatedAt,
+                    bc.Category,
+                    bc.WriterId,
+                    bc.Writer.Nickname,
                     Files = bc.BoardFiles
-                    .OrderByDescending(bf => bf.BoardFileId)
-                    .Take(1)
-                    .Select(f => new ResBoardFileDTO
-                    {
-                        ThumbUrl = f.SaveFileName + f.Extension,
-                        FileName = f.SaveFileName,
-                        Extension = f.Extension,
-                        FileSize = f.FileSize,
-                    }).FirstOrDefault()
+                        .OrderByDescending(bf => bf.BoardFileId)
+                        .Take(1)
+                        .Select(f => new
+                        {
+                            f.SaveFileName,
+                            f.Extension,
+                            f.FileSize
+                        }).FirstOrDefault()
                 }).ToListAsync();
+
+            return topNotices.Select(notice => new ResPostRankDTO
+            {
+                BoardContentId = notice.BoardContentId,
+                Title = notice.Title,
+                CreatedAt = notice.CreatedAt,
+                Category = notice.Category,
+                Writer = new ResWriterDTO
+                {
+                    MemberId = notice.WriterId,
+                    Nickname = notice.Nickname
+                },
+                Files = notice.Files != null ? new ResBoardFileDTO
+                {
+                    ThumbUrl = GetBlobUrl(_containerName, notice.Files.SaveFileName + notice.Files.Extension),
+                    FileName = notice.Files.SaveFileName,
+                    Extension = notice.Files.Extension,
+                    FileSize = notice.Files.FileSize
+                } : null
+            }).ToList();
         }
 
         public async Task<List<ResPostRankDTO>> GetNewPostByCategory(string category)
         {
-            return await _context.BoardContents
+            var newPosts = await _context.BoardContents
                 .Where(bc => bc.Category == category)
                 .OrderByDescending(bc => bc.CreatedAt)
                 .ThenByDescending(bc => bc.BoardContentId)
                 .Take(3)
-                .Select(bc => new ResPostRankDTO
+                .Select(bc => new
                 {
-                    BoardContentId = bc.BoardContentId,
-                    Category = bc.Category,
-                    Title = bc.Title,
-                    CreatedAt = bc.CreatedAt,
-                    Writer = new ResWriterDTO
-                    {
-                        MemberId = bc.WriterId,
-                        Nickname = bc.Writer.Nickname
-                    },
+                    bc.BoardContentId,
+                    bc.Title,
+                    bc.CreatedAt,
+                    bc.Category,
+                    bc.WriterId,
+                    bc.Writer.Nickname,
                     Files = bc.BoardFiles
-                    .OrderByDescending(bf => bf.BoardFileId)
-                    .Take(1)
-                    .Select(f => new ResBoardFileDTO
-                    {
-                        ThumbUrl = f.SaveFileName + f.Extension,
-                        FileName = f.SaveFileName,
-                        Extension = f.Extension,
-                        FileSize = f.FileSize,
-                    }).FirstOrDefault()
+                        .OrderByDescending(bf => bf.BoardFileId)
+                        .Take(1)
+                        .Select(f => new
+                        {
+                            f.SaveFileName,
+                            f.Extension,
+                            f.FileSize
+                        }).FirstOrDefault()
                 }).ToListAsync();
+
+            return newPosts.Select(post => new ResPostRankDTO
+            {
+                BoardContentId = post.BoardContentId,
+                Category = post.Category,
+                Title = post.Title,
+                CreatedAt = post.CreatedAt,
+                Writer = new ResWriterDTO
+                {
+                    MemberId = post.WriterId,
+                    Nickname = post.Nickname
+                },
+                Files = post.Files != null ? new ResBoardFileDTO
+                {
+                    ThumbUrl = GetBlobUrl(_containerName, post.Files.SaveFileName + post.Files.Extension),
+                    FileName = post.Files.SaveFileName,
+                    Extension = post.Files.Extension,
+                    FileSize = post.Files.FileSize
+                } : null
+            }).ToList();
         }
 
         public async Task<List<ResPostRankDTO>> GetTopFiveFreeBoards()
@@ -410,8 +500,8 @@ namespace GowBoard.Models.Service
                     {
                         MemberId = bc.WriterId,
                         Nickname = bc.Writer.Nickname
-                    },
-                }).ToListAsync(); ;
+                    }
+                }).ToListAsync();
         }
     }
 
