@@ -1,5 +1,5 @@
-using GowBoard.Models.Service.Interface;
 using GowBoard.Models.Service;
+using GowBoard.Models.Service.Interface;
 using System.Web.Mvc;
 using Unity;
 using Unity.Mvc5;
@@ -16,6 +16,7 @@ namespace GowBoard
             container.RegisterType<IBoardService, BoardService>();
             container.RegisterType<IFileService, FileService>();
             container.RegisterType<ICommentService, CommentService>();
+            container.RegisterType<INotificationService, NotificationService>();
 
             // Set resolver for MVC
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));

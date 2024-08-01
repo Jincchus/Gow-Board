@@ -167,6 +167,8 @@
     <!-- ======= Footer ======= -->
     <footer id="footer" class="footer">
 
+        <!-- !!!!!!!!!!실시간 알림 !!!!!!!삭제 예정 !!!!!!!!!!-->
+        <div id="notifications"></div>
 
         <div class="footer-legal">
             <div class="container">
@@ -202,6 +204,9 @@
     <script src="~/Content/vendor/swiper/swiper-bundle.min.js"></script>
     <script src="~/Content/vendor/glightbox/js/glightbox.min.js"></script>
     <script src="~/Content/vendor/aos/aos.js"></script>
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.4.3.min.js"></script>
+
 
     <!-- Template Main JS File -->
     <script src="~/Scripts/main.js"></script>
@@ -252,7 +257,28 @@
         var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
         var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
             return new bootstrap.Dropdown(dropdownToggleEl)
-        })
+        });
+
+
+        // 실시간 알림
+        $(function () {
+            // SignalR 허브와의 연결 설정
+            var connection = $.hubConnection();
+            var hubProxy = connection.createHubProxy('notificationHub');
+
+            // 서버에서 클라이언트로 알림을 받을 메서드 정의
+            hubProxy.on('ReceiveNotification', function (message) {
+                $('#notifications').append('<div>' + message + '</div>');
+            });
+
+            // SignalR 연결 시작
+            connection.start().done(function () {
+                console.log('SignalR Connected!');
+            }).fail(function (err) {
+                console.error(err.toString());
+            });
+        });
+
     });
     </script>
 

@@ -7,6 +7,11 @@
     "mssql1": {
       "type": "mssql",
       "connectionId": "ConnectionStrings:gow-board.database.windows.net"
+    },
+    "storage1": {
+      "type": "storage",
+      "connectionId": "bacchus2",
+      "dynamicId": null
     }
   }
 }

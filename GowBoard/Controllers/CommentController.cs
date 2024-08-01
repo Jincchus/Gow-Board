@@ -9,12 +9,17 @@ namespace GowBoard.Controllers
     {
         private readonly ICommentService _commentService;
         private readonly IMemberService _memberService;
+        private readonly IBoardService _boardService;
+        private readonly INotificationService _notificationService;
 
-        public CommentController(ICommentService commentService, IMemberService memberService)
+        public CommentController(ICommentService commentService, IMemberService memberService, IBoardService boardService, INotificationService notificationService)
         {
             _commentService = commentService;
             _memberService = memberService;
+            _boardService = boardService;
+            _notificationService = notificationService;
         }
+
 
         // Post: Comment/CreateComment
         // 댓글 등록
@@ -32,6 +37,12 @@ namespace GowBoard.Controllers
             try
             {
                 _commentService.CreateComment(memberId, reqBoardCommentDTO);
+
+                // 댓글 작성 후 게시글 작성자에게 알림 전송
+                var boardContentInfo = _boardService.GetBoardContentById(reqBoardCommentDTO.BoardContentId);
+                _notificationService.SendNotification(boardContentInfo.Writer.MemberId, "새로운 댓글이 달렸습니다.");
+
+
                 return Json(new { success = true, message = "댓글이 등록되었습니다." });
             }
             catch (Exception ex)
