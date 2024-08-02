@@ -1,5 +1,8 @@
-﻿using GowBoard.Models.DTO.RequestDTO;
+﻿//using GowBoard.Hubs;
+using GowBoard.Hubs;
+using GowBoard.Models.DTO.RequestDTO;
 using GowBoard.Models.Service.Interface;
+using Microsoft.AspNet.SignalR;
 using System;
 using System.Web.Mvc;
 
@@ -38,9 +41,19 @@ namespace GowBoard.Controllers
             {
                 _commentService.CreateComment(memberId, reqBoardCommentDTO);
 
-                // 댓글 작성 후 게시글 작성자에게 알림 전송
+                // 댓글 작성 후 게시글 탐색
                 var boardContentInfo = _boardService.GetBoardContentById(reqBoardCommentDTO.BoardContentId);
+
+                // 원 게시글 글쓴이에게 알림 전송
                 _notificationService.SendNotification(boardContentInfo.Writer.MemberId, "새로운 댓글이 달렸습니다.");
+
+                // TODO : 대댓글시 댓글(parentId) 탐색 후 알림 전송
+                if(reqBoardCommentDTO.ParentCommentId != null)
+                {
+                    // getCommentWriterById(int commentId)
+                    // var parentCommentWriter = _commentService.getCommentWirterById(reqBoardCommentDTO.ParentCommentId); // 여기서 requBoardCommentDTO.ParentCommentId = int?타입
+                    // _notificationService.SendNotification(parentCommentWriter, "새로운 답댓글이 달렸습니다.");
+                }
 
 
                 return Json(new { success = true, message = "댓글이 등록되었습니다." });

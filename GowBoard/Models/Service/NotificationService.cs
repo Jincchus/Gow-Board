@@ -1,21 +1,28 @@
 ﻿using GowBoard.Hubs;
 using GowBoard.Models.Service.Interface;
 using Microsoft.AspNet.SignalR;
+using System;
 
 namespace GowBoard.Models.Service
 {
     public class NotificationService : INotificationService
     {
-        private readonly IHubContext _hubContext;
+        private readonly Lazy<IHubContext> _hubContext;
 
-        public NotificationService(IHubContext hubContext)
+        public NotificationService()
         {
-            _hubContext = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
+            _hubContext = new Lazy<IHubContext>(() => GlobalHost.ConnectionManager.GetHubContext<NotificationHub>());
         }
 
         public void SendNotification(string memberId, string message)
         {
-            _hubContext.Clients.User(memberId).receiveNotification(message);
+            var context = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
+            context.Clients.User(memberId).receiveNotification(message);
+        }
+
+        public void receiveNotification(string memberId, string message)
+        {
+
         }
     }
 }

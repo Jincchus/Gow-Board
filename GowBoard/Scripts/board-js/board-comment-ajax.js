@@ -44,8 +44,11 @@
 
 function createComment(event) {
     if (!confirm("댓글을 등록하시겠습니까?")) {
+        debugger
         return;
     }
+
+    debugger
 
     const commentContent = document.querySelector("#ParentComment").value;
 
@@ -55,6 +58,8 @@ function createComment(event) {
         ParentCommentId: null,
     };
 
+    debugger
+
     fetch('/Comment/CreateComment', {
         method: "POST",
         headers: {
@@ -62,18 +67,31 @@ function createComment(event) {
         },
         body: JSON.stringify(commentData)
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                debugger
+                return response.text().then(text => {
+                    throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
+                });
+            }
+            debugger
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
+                debugger
                 alert(data.message);
                 location.reload(); // TODO: 댓글 추가 후 페이지 새로고침(새로고침 말고 동적으로 리플 확인 할 수 있게 변경)
             } else if (!data.isAuthenticated) {
+                debugger
                 alert(data.message);
                 window.location.href = '/Member/Login';
             } else {
+                debugger
                 alert(data.message);
             }
         }).catch(error => {
+            debugger
             alert('catch error: ' + error.message);
         });
 }
@@ -100,18 +118,32 @@ function createReplyComment(event) {
         },
         body: JSON.stringify(commentData)
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                debugger
+                return response.text().then(text => {
+                    throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
+                });
+            }
+            debugger
+            return response.json();
+        })
         .then(data => {
+            debugger
             if (data.success) {
+                debugger
                 alert(data.message);
                 location.reload(); // TODO: 댓글 추가 후 페이지 새로고침(새로고침 말고 동적으로 리플 확인 할 수 있게 변경)
             } else if (!data.isAuthenticated) {
+                debugger
                 alert(data.message);
                 window.location.href = '/Member/Login';
             } else {
+                debugger
                 alert(data.message);
             }
         }).catch(error => {
+            debugger
             alert('catch error: ' + error.message);
         });
 }

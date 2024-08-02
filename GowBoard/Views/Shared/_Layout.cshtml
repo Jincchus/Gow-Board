@@ -168,7 +168,7 @@
     <footer id="footer" class="footer">
 
         <!-- !!!!!!!!!!실시간 알림 !!!!!!!삭제 예정 !!!!!!!!!!-->
-        <div id="notifications"></div>
+        <div id="notifications" style="font: white;"> 아임 히어 </div>
 
         <div class="footer-legal">
             <div class="container">
@@ -204,9 +204,10 @@
     <script src="~/Content/vendor/swiper/swiper-bundle.min.js"></script>
     <script src="~/Content/vendor/glightbox/js/glightbox.min.js"></script>
     <script src="~/Content/vendor/aos/aos.js"></script>
-    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="~/Scripts/jquery.signalR-2.4.3.min.js"></script>
-
+    <script src="/signalr/hubs"></script>
 
     <!-- Template Main JS File -->
     <script src="~/Scripts/main.js"></script>
@@ -261,28 +262,38 @@
 
 
         // 실시간 알림
-        $(function () {
-            // SignalR 허브와의 연결 설정
-            var connection = $.hubConnection();
-            var hubProxy = connection.createHubProxy('notificationHub');
+        var connectionHub = $.connection.notificationHub;
+        //var hubProxy = connection.createHubProxy('notificationHub');
 
-            // 서버에서 클라이언트로 알림을 받을 메서드 정의
-            hubProxy.on('ReceiveNotification', function (message) {
-                $('#notifications').append('<div>' + message + '</div>');
-            });
+        debugger
 
-            // SignalR 연결 시작
-            connection.start().done(function () {
+        // 클라이언트 측 메서드 정의
+        connection.client.receiveNotification = function (message) {
+            $('#notifications').append('<div>' + '들어와따' + '</div>');
+            $('#notifications').append('<div>' + message + '</div>');
+            debugger; 
+        };
+
+        /*
+        hubProxy.on('receiveNotification', function (message) {
+            debugger;
+            $('#notifications').append('<div>' + 들어와따 + '</div>');
+            $('#notifications').append('<div>' + message + '</div>');
+            debugger
+        });*/
+
+        debugger
+        connection.start()
+            .done(function () {
                 console.log('SignalR Connected!');
-            }).fail(function (err) {
-                console.error(err.toString());
+            })
+            .fail(function (err) {
+                console.error('SignalR connection error: ' + err.toString());
+                console.error('Error details:', err);
             });
-        });
-
     });
     </script>
 
-    @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 </body>
