@@ -20,9 +20,5 @@ namespace GowBoard.Models.Service
             context.Clients.User(memberId).receiveNotification(message);
         }
 
-        public void receiveNotification(string memberId, string message)
-        {
-
-        }
     }
 }
