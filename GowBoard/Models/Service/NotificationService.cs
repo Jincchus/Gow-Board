@@ -16,8 +16,8 @@ namespace GowBoard.Models.Service
 
         public void NotifyUser(string memberId, string message)
         {
-            var context = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
-            context.Clients.User(memberId).receiveNotification(message);
+            var context = _hubContext.Value;
+            context.Clients.Group(memberId).receiveNotification(memberId, message);
         }
 
     }

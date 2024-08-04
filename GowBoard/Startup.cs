@@ -11,6 +11,16 @@ namespace GowBoard
     {
         public void Configuration(IAppBuilder app)
         {
+            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
+                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
+                LoginPath = new PathString("/Member/LogIn")
+            });
+
+            var hubConfiguration = new HubConfiguration
+            {
+                EnableDetailedErrors = true
+            };
             app.MapSignalR();
         }
     }

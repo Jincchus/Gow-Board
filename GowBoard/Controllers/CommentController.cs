@@ -57,7 +57,6 @@ namespace GowBoard.Controllers
             {
                 return Json(new { success = false, message = "댓글 등록에 실패하였습니다." });
             }
-
         }
 
         [HttpPost]

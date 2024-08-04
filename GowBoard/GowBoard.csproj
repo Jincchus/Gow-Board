@@ -510,6 +510,7 @@
     <Folder Include="Uploads\Thumbnail\" />
     <Folder Include="Views\Comment\" />
     <Folder Include="Views\Error\" />
+    <Folder Include="Views\Notification\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

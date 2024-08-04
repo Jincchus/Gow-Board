@@ -140,12 +140,12 @@
 
     const fileUpload = document.getElementById('file-upload');
     const fileList = document.getElementById('file-list');
-    const maxFileSize = 20 * 1024 * 1024; // 20MB in bytes
+    const maxFileSize = 20 * 1024 * 1024;
 
     fileUpload.addEventListener('change', async function (event) {
         const files = event.target.files;
-
-
+        debugger
+        /*
         // Create a FileReader to read the file content
         const reader = new FileReader();
 
@@ -156,7 +156,7 @@
 
         // Read the file as ArrayBuffer to get binary data
         reader.readAsArrayBuffer(file);
-
+        */
 
         for (let file of files) {
             if (file.size > maxFileSize) {
@@ -168,6 +168,7 @@
                 const formData = new FormData();
                 formData.append('file', file);
 
+                debugger
                 const response = await fetch('/Board/BoardFileCreate', {
                     method: 'POST',
                     body: formData
@@ -176,6 +177,7 @@
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.message || '파일 업로드 실패');
+                    debugger
                 }
 
                 const result = await response.json();
@@ -190,6 +192,7 @@
                 boardFileIds.push(result.boardFileId); // 배열에 파일 ID 추가
 
             } catch (error) {
+                debugger
                 console.error('파일 업로드 중 오류:', error);
                 alert('파일 업로드 중 오류가 발생했습니다.');
             }
@@ -256,9 +259,9 @@
         formData.append('Category', category);
         formData.append('Content', content);
 
-        for (let i = 0; i < boardFileIds.length; i++) {
-            formData.append('BoardFileId[]', boardFileIds[i]);
-        }
+        boardFileIds.forEach(fileId => {
+            formData.append('BoardFileId[]', fileId);
+        });
 
         for (let i = 0; i < boardImageIds.length; i++) {
             formData.append('BoardFileId[]', boardImageIds[i]);
