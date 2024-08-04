@@ -136,7 +136,7 @@ namespace GowBoard.Models.Service
                 return;
             }
 
-            foreach(var childComment in childComments)
+            foreach (var childComment in childComments)
             {
                 DeleteChildComments(childComment.BoardCommentId);
                 _context.BoardCommnets.Remove(childComment);

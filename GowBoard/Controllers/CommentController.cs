@@ -4,6 +4,7 @@ using GowBoard.Models.DTO.RequestDTO;
 using GowBoard.Models.Service.Interface;
 using Microsoft.AspNet.SignalR;
 using System;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace GowBoard.Controllers
@@ -23,10 +24,9 @@ namespace GowBoard.Controllers
             _notificationService = notificationService;
         }
 
-
         // Post: Comment/CreateComment
         // 댓글 등록
-        public JsonResult CreateComment(ReqBoardCommentDTO reqBoardCommentDTO)
+        public async Task<JsonResult> CreateComment(ReqBoardCommentDTO reqBoardCommentDTO)
         {
 
 
@@ -40,19 +40,14 @@ namespace GowBoard.Controllers
             try
             {
                 _commentService.CreateComment(memberId, reqBoardCommentDTO);
-
-                // 댓글 작성 후 게시글 탐색
                 var boardContentInfo = _boardService.GetBoardContentById(reqBoardCommentDTO.BoardContentId);
-
-                // 원 게시글 글쓴이에게 알림 전송
-                _notificationService.SendNotification(boardContentInfo.Writer.MemberId, "새로운 댓글이 달렸습니다.");
+                _notificationService.NotifyUser(boardContentInfo.Writer.MemberId, "새로운 댓글이 달렸습니다.");
 
                 // TODO : 대댓글시 댓글(parentId) 탐색 후 알림 전송
-                if(reqBoardCommentDTO.ParentCommentId != null)
+                if (reqBoardCommentDTO.ParentCommentId != null)
                 {
-                    // getCommentWriterById(int commentId)
-                    // var parentCommentWriter = _commentService.getCommentWirterById(reqBoardCommentDTO.ParentCommentId); // 여기서 requBoardCommentDTO.ParentCommentId = int?타입
-                    // _notificationService.SendNotification(parentCommentWriter, "새로운 답댓글이 달렸습니다.");
+                    // var parentCommentWriter = await _commentService.GetCommentWriterByIdAsync(reqBoardCommentDTO.ParentCommentId.Value);
+                    // await _notificationService.SendNotificationAsync(parentCommentWriter, "새로운 답댓글이 달렸습니다.");
                 }
 
 

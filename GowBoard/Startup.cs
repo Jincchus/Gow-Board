@@ -23,7 +23,7 @@ namespace GowBoard
             {
                 EnableDetailedErrors = true
             };
-            app.MapSignalR("/signalr",hubConfiguration);
+            app.MapSignalR("/signalr", hubConfiguration);
         }
     }
 }

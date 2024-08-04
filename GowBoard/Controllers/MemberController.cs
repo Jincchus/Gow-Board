@@ -124,7 +124,6 @@ namespace GowBoard.Controllers
             var role = _memberService.GetRoleByMemberId(loginResult.Member.MemberId);
             Session["RoleId"] = role.RoleId;
 
-
             return RedirectToAction("Index", "Home");
 
         }

@@ -260,37 +260,32 @@
             return new bootstrap.Dropdown(dropdownToggleEl)
         });
 
+        $(function () {
+            var notificationHub = $.connection.notificationHub;
 
-        // 실시간 알림
-        var connectionHub = $.connection.notificationHub;
-        //var hubProxy = connection.createHubProxy('notificationHub');
+            // 연결 시작 전에 함수 정의
+            notificationHub.client.receiveNotification = function (message, memberId) {
+                console.log("Notification received:", message, memberId);
+                var currentUserId = '@Session["MemberId"]'; // 주의: 이 부분은 서버 사이드 렌더링이 필요합니다
+                if (memberId === currentUserId) {
+                    console.log("Notification for current user");
+                    alert(message);
+                    $('#notifications').append('<div>' + message + '</div>');
+                }
+            };
 
-        debugger
-
-        // 클라이언트 측 메서드 정의
-        connection.client.receiveNotification = function (message) {
-            $('#notifications').append('<div>' + '들어와따' + '</div>');
-            $('#notifications').append('<div>' + message + '</div>');
-            debugger; 
-        };
-
-        /*
-        hubProxy.on('receiveNotification', function (message) {
-            debugger;
-            $('#notifications').append('<div>' + 들어와따 + '</div>');
-            $('#notifications').append('<div>' + message + '</div>');
-            debugger
-        });*/
-
-        debugger
-        connection.start()
-            .done(function () {
+            // 연결 시작
+            $.connection.hub.start().done(function () {
                 console.log('SignalR Connected!');
-            })
-            .fail(function (err) {
+            }).fail(function (err) {
                 console.error('SignalR connection error: ' + err.toString());
-                console.error('Error details:', err);
             });
+
+            // 연결 에러 핸들링
+            $.connection.hub.error(function (error) {
+                console.error('SignalR error: ' + error);
+            });
+        });
     });
     </script>
 

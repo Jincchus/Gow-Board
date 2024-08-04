@@ -5,12 +5,34 @@ namespace GowBoard.Hubs
 {
     public class NotificationHub : Hub
     {
-        // 클라이언트가 호출할 수 있는 메서드
-        public async Task receiveNotification( string message)
+        public override Task OnConnected()
         {
-            // 클라이언트가 호출할 메서드
-            // 클라이언트가 호출할 때는 이 메서드가 필요합니다.
-            await Clients.Caller.receiveNotification(message);
+            var memberId = Context.QueryString["MemberId"];
+            if (!string.IsNullOrEmpty(memberId))
+            {
+                Groups.Add(Context.ConnectionId, memberId);
+            }
+            else
+            {
+                Groups.Add(Context.ConnectionId, "AnonymousGroup");
+            }
+            return base.OnConnected();
+        }
+
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            var memberId = Context.User.Identity.Name;
+            if (!string.IsNullOrEmpty(memberId))
+            {
+                Groups.Remove(Context.ConnectionId, memberId);
+            }
+            return base.OnDisconnected(stopCalled);
+        }
+
+        public static void SendNotificationToUser(string memberId, string message)
+        {
+            var context = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
+            context.Clients.Group(memberId).receiveNotification(message, memberId);
         }
     }
 }
