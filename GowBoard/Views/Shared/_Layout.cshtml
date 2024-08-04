@@ -260,30 +260,32 @@
             return new bootstrap.Dropdown(dropdownToggleEl)
         });
 
-        $(function () {
-            var notificationHub = $.connection.notificationHub;
 
-            // 연결 시작 전에 함수 정의
-            notificationHub.client.receiveNotification = function (message, memberId) {
-                console.log("Notification received:", message, memberId);
-                var currentUserId = '@Session["MemberId"]'; // 주의: 이 부분은 서버 사이드 렌더링이 필요합니다
-                if (memberId === currentUserId) {
-                    console.log("Notification for current user");
+        // 실시간 알림
+        var currentUserId = '@Session["MemberId"]';
+        $(function () {
+            // SignalR 허브 연결 설정
+            var notificationHub = $.connection.notificationHub;
+            debugger
+
+            // 서버에서 보내는 알림을 수신
+            notificationHub.client.receiveNotification = function (message, recipientMemberId) {
+                if (recipientMemberId == currentUserId) {
+                    debugger
                     alert(message);
+
+                    // 현재 로그인한 사용자가 알림의 수신자인 경우에만 알림을 표시
                     $('#notifications').append('<div>' + message + '</div>');
                 }
             };
 
-            // 연결 시작
-            $.connection.hub.start().done(function () {
-                console.log('SignalR Connected!');
-            }).fail(function (err) {
-                console.error('SignalR connection error: ' + err.toString());
-            });
-
-            // 연결 에러 핸들링
-            $.connection.hub.error(function (error) {
-                console.error('SignalR error: ' + error);
+            // 허브 연결 시작
+            $.connection.hub.start()
+            .done(function () {
+                console.log('SignalR connection 성공.');
+            })
+            .fail(function (error) {
+                console.error('SignalR connection failed: ', error);
             });
         });
     });
