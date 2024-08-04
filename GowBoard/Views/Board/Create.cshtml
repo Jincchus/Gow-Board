@@ -240,7 +240,7 @@
 
         const title = document.querySelector("#Title");
         const content = editor.el.innerHTML;
-        const contentText = editor.html.get().replace(/<p><br><\/p>/g, '').trim();
+        const contentText = content.trim();
 
         if (title.value.trim() === "") {
             alert("제목을 입력해주세요");
@@ -248,7 +248,7 @@
             return;
         }
 
-        if (contentText === "") {
+        if (content === '<p><br></p>') {
             alert("내용을 입력해주세요");
             editor.events.focus();
             return;

@@ -269,94 +269,28 @@
             return new bootstrap.Dropdown(dropdownToggleEl)
         });
 
-
         // 실시간 알림
         $(function () {
-            // SignalR 로깅 활성화
-            $.connection.hub.logging = true;
-            // Hub 프록시 생성
-            var notificationHub = $.connection.notificationHub;
-            debugger
+            var memberId = '@Session["MemberId"]'; 
+            var connection = $.hubConnection();
+            connection.qs = { "memberId": memberId };
+            var hub = connection.createHubProxy('notificationHub');
 
-            // SignalR 연결 및 설정 함수
-            function startSignalR() {
-                // SignalR 허브 연결 시작
-                $.connection.hub.start()
-                    .done(function () {
-                        console.log('SignalR Connected! Connection ID:', $.connection.hub.id);
-
-                        var currentUserId = '@Session["MemberId"]';
-
-                        // 클라이언트 측에서 서버로부터 알림을 받을 때 호출되는 메서드 정의
-                        $.connection.notificationHub.client.receiveNotification = function (userId, message) {
-                            debugger; 
-                            console.log("Notification received:", message, "for user:", userId);
-
-                            // 현재 사용자 ID가 클라이언트 세션의 ID와 일치하는지 확인
-                            if (userId === currentUserId) {
-                                console.log("Notification for current user");
-                                alert(message);
-                                $('#notifications').append('<div>' + message + '</div>');
-                            }
-                        };
-                        debugger;
-
-                        console.log("Current User ID:", currentUserId);
-                        console.log("1", $.connection.notificationHub.client.receiveNotification);
-                    })
-                    .fail(function (error) {
-                        // 연결 실패 시 오류 로그 출력
-                        console.error('SignalR connection error:', error);
-                    });
-            }
-
-            // 페이지 로드 시 SignalR 연결 시작
-            $(document).ready(function() {
-                startSignalR();
+            hub.on('receiveNotification', function (memberId, message) {
+                alert('memberId : '+ memberId +'<br/>'+'message :' + message)
+                console.log("Received notification: " + message);
+                // 알림 표시 로직
             });
 
-            // 연결 끊김 처리
-            $.connection.hub.disconnected(function () {
-                console.log('SignalR disconnected');
-                setTimeout(function () {
-                    startSignalR();
-                }, 5000); // 5초 후 재연결 시도
-            });
-
-            // 연결 상태 변경 처리
-            $.connection.hub.stateChanged(function (change) {
-                var oldState = change.oldState;
-                var newState = change.newState;
-                console.log('SignalR state changed from', getStateName(oldState), 'to', getStateName(newState));
-            });
-
-            // 연결 상태 이름 반환 함수
-            function getStateName(state) {
-                switch (state) {
-                    case $.signalR.connectionState.connecting: return 'Connecting';
-                    case $.signalR.connectionState.connected: return 'Connected';
-                    case $.signalR.connectionState.reconnecting: return 'Reconnecting';
-                    case $.signalR.connectionState.disconnected: return 'Disconnected';
-                    default: return 'Unknown';
-                }
-            }
-
-            // 재연결 함수 (로그인 성공 후 호출)
-            window.reconnectSignalR = function() {
-                if ($.connection.hub && $.connection.hub.state === $.signalR.connectionState.disconnected) {
-                    startSignalR();
-                } else {
-                    console.log('SignalR is already connected or connecting');
-                }
-            };
-
-            // 주기적 연결 상태 확인
-            setInterval(function() {
-                if ($.connection.hub.state === $.signalR.connectionState.disconnected) {
-                    console.log('Periodic check: SignalR disconnected, attempting to reconnect');
-                    startSignalR();
-                }
-            }, 30000); // 30초마다 확인
+            connection.start()
+                .done(function() {
+                    console.log('Now connected, connection ID=' + connection.id);
+                    hub.invoke('AssociateUser', memberId);
+                    debugger
+                })
+                .fail(function() {
+                    console.log('Could not connect');
+                });
         });
     });
 </script>
