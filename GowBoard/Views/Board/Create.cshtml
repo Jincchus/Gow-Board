@@ -152,6 +152,8 @@
                 continue; // Skip this file
             }
 
+            let fileItem;
+
             try {
                 const formData = new FormData();
                 formData.append('file', file);
@@ -170,16 +172,21 @@
 
                 const result = await response.json();
 
-                const fileItem = document.createElement('div');
+                fileItem = document.createElement('div');
                 fileItem.className = 'file-item';
                 fileItem.innerHTML = `
                     <span>${file.name}</span>
                     <button type="button" class="remove-file bi bi-file-earmark-x" data-id="${result.boardFileId}" ></button>
                 `;
                 fileList.appendChild(fileItem);
-                boardFileIds.push(result.boardFileId); // 배열에 파일 ID 추가
+                boardFileIds.push(result.boardFileId); // 배열에 파일 ID 추가 
+                console.log('Current boardFileIds:', boardFileIds); // 로그 추가
+                
 
             } catch (error) {
+                if (fileItem) {
+                    fileItem.remove();
+                }
                 debugger
                 console.error('파일 업로드 중 오류:', error);
                 alert('파일 업로드 중 오류가 발생했습니다.');

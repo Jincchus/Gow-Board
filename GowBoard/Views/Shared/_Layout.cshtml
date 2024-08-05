@@ -125,11 +125,11 @@
                                 <li class="dropdown">
                                     <a href="@Url.Action("MyProfile", "MyPage", new { area = "" })">
                                         <span>
-                                            <i class="bi bi-chevron-down dropdown-indicator"></i>
+                                            <i class="bi bi-chevron-down dropdown-indicator" id="notification-indicator"></i>
                                             <span>@Session["Nickname"]님, 반갑습니다.</span>
                                         </span>
                                     </a>
-                                    <ul>
+                                    <ul id="dropdown-menu">
                                         <li><a href="@Url.Action("MyProfile", "MyPage", new { area = "" })">MyPage</a></li>
                                         <li><a href="@Url.Action("Logout", "Member", new { area = "" })">Logout</a></li>
                                     </ul>
@@ -165,9 +165,6 @@
     </div>
     <!-- ======= Footer ======= -->
     <footer id="footer" class="footer">
-
-        <!-- !!!!!!!!!!실시간 알림 !!!!!!!삭제 예정 !!!!!!!!!!-->
-        <div id="notifications" style="font: white;"> 아임 히어 </div>
 
         <div class="footer-legal">
             <div class="container">
@@ -277,9 +274,14 @@
             var hub = connection.createHubProxy('notificationHub');
 
             hub.on('receiveNotification', function (memberId, message) {
-                alert('memberId : '+ memberId +'<br/>'+'message :' + message)
                 console.log("Received notification: " + message);
-                // 알림 표시 로직
+
+                // 알림 표시
+                $('#notification-indicator').css('color', 'red');
+
+                // 드롭다운 메뉴에 새 알림 추가
+                var newNotification = $('<li><a href="#">' + message + '</a></li>');
+                $('#dropdown-menu').prepend(newNotification);
             });
 
             connection.start()

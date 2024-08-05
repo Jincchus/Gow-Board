@@ -168,7 +168,7 @@
                 fileItem.className = 'file-item';
                 fileItem.innerHTML = `
                     <span>${file.name}</span>
-                    <button type="button" class="remove-file" data-id="${result.boardFileId}">X</button>
+                    <button type="button" class="remove-file bi bi-file-earmark-x" data-id="${result.boardFileId}" ></button>
                 `;
                 fileList.appendChild(fileItem);
                 boardFileIds.push(result.boardFileId);
@@ -309,7 +309,7 @@
                                 fileItem.className = 'file-item';
                                 fileItem.innerHTML = `
                                 <span>${file.name}</span> 
-                                <button type="button" class="remove-file" data-id="${file.id}">X</button>
+                                <button type="button" class="remove-file bi bi-file-earmark-x" data-id="${result.boardFileId}" ></button>
                             `;
                                 fileList.appendChild(fileItem);
                             }
