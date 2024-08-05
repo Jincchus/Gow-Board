@@ -141,6 +141,7 @@ namespace GowBoard.Models.Service
             return imageExtensions.Contains(extension.ToLower());
         }
 
+
         public async Task<ResFileResult> DownloadFileAsync(int boardFileId)
         {
             var file = await GetFileByIdAsync(boardFileId);
@@ -175,7 +176,6 @@ namespace GowBoard.Models.Service
             if (existingFile != null)
             {
                 existingFile.BoardContentId = boardFile.BoardContentId;
-                // 필요한 다른 필드들도 업데이트할 수 있습니다.
                 await _context.SaveChangesAsync();
             }
         }

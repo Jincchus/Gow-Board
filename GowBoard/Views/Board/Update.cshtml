@@ -58,6 +58,8 @@
 <script>
     let boardFileIds = [];
     let boardImageIds = [];
+    const fileList = document.getElementById('file-list');
+    const maxFileSize = 20 * 1024 * 1024;
 
     const cancelBtn = document.querySelector(".cancel-btn");
     cancelBtn.addEventListener("click", function () {
@@ -138,8 +140,6 @@
 
 
     const fileUpload = document.getElementById('file-upload');
-    const fileList = document.getElementById('file-list');
-    const maxFileSize = 20 * 1024 * 1024;
 
     fileUpload.addEventListener('change', async function (event) {
         const files = event.target.files;
@@ -221,7 +221,7 @@
 
         const title = document.querySelector("#Title");
         const content = editor.html.get();
-        const contentText = editor.html.get().replace(/<p><br><\/p>/g, '').trim();
+        const contentText = content.trim();
 
         if (title.value.trim() === "") {
             alert("제목을 입력해주세요");
@@ -229,7 +229,7 @@
             return;
         }
 
-        if (contentText === "") {
+        if (content === '<p><br></p>') {
             alert("내용을 입력해주세요");
             editor.events.focus();
             return;
@@ -240,8 +240,10 @@
         formData.append('Content', content);
 
         boardFileIds.forEach(fileId => {
+            debugger
             formData.append('BoardFileId[]', fileId);
         });
+
 
         for (let i = 0; i < boardImageIds.length; i++) {
             formData.append('BoardFileId[]', boardImageIds[i]);

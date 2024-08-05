@@ -61,6 +61,7 @@
     const category = document.querySelector("#Category").value;
     let boardImageIds = [];
     let boardFileIds = [];
+    debugger
 
     cancelBtn.addEventListener("click", function () {
         if (confirm("입력된 글이 모두 사라집니다. 리스트로 돌아가시겠습니까?")) {
@@ -144,19 +145,6 @@
 
     fileUpload.addEventListener('change', async function (event) {
         const files = event.target.files;
-        debugger
-        /*
-        // Create a FileReader to read the file content
-        const reader = new FileReader();
-
-        reader.onload = function (e) {
-            // e.target.result contains the file binary data
-            console.log('File content as binary data:', e.target.result);
-        };
-
-        // Read the file as ArrayBuffer to get binary data
-        reader.readAsArrayBuffer(file);
-        */
 
         for (let file of files) {
             if (file.size > maxFileSize) {
@@ -262,6 +250,7 @@
         boardFileIds.forEach(fileId => {
             formData.append('BoardFileId[]', fileId);
         });
+
 
         for (let i = 0; i < boardImageIds.length; i++) {
             formData.append('BoardFileId[]', boardImageIds[i]);

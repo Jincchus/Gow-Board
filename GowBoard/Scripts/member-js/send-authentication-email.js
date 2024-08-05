@@ -48,6 +48,8 @@ emailAuthenticationBtn.addEventListener("click", function () {
             const checkNumbOkBtn = document.querySelector("#CheckNum-ok-btn");
             debugger
             if (data.success) {
+                alert("이메일이 성공적으로 전송되었습니다.");
+
                 currentAuthNumber = data.authNumber;
 
                 checkNum.disabled = false;

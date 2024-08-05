@@ -75,6 +75,11 @@ function validateEmptyFields() {
 
 
 function validateCheck(field) {
+    // 입력값이 비어있는 경우 가이드 문구 초기화
+    if (field.element.value.trim() === '') {
+        field.validationTag.textContent = '';
+        return false;
+    }
 
     if (field.element === fields.PasswordChk.element) {
 

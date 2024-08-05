@@ -245,6 +245,7 @@ namespace GowBoard.Controllers
 
             var boardFiles = new List<ResFileResult>();
             var fileIds = boardContent.BoardFiles.Where(f => !f.IsEditorImage);
+
             foreach (var fileId in fileIds)
             {
                 var file = await _fileService.GetFileByIdAsync(fileId.BoardFileId);
