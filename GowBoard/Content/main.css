@@ -1352,3 +1352,14 @@ section {
 .custom-pagination a.active {
     color: #fff !important; /* active 상태일 때 글자 색상 하얀색으로 설정 */
 }
+
+#notification-badge {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: 10px;
+    height: 10px;
+    background-color: blue;
+    border-radius: 50%;
+    display: none;
+}

@@ -1,7 +1,9 @@
-﻿namespace GowBoard.Models.Service.Interface
+﻿using GowBoard.Models.DTO.ResponseDTO;
+
+namespace GowBoard.Models.Service.Interface
 {
     public interface INotificationService
     {
-        void NotifyUser(string memberId, string message);
+        void NotifyUser(ResBoardDetailDTO resBoardDetailDTO);
     }
 }

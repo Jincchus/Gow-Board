@@ -41,7 +41,7 @@ namespace GowBoard.Controllers
             {
                 _commentService.CreateComment(memberId, reqBoardCommentDTO);
                 var boardContentInfo = _boardService.GetBoardContentById(reqBoardCommentDTO.BoardContentId);
-                _notificationService.NotifyUser(boardContentInfo.Writer.MemberId, "새로운 댓글이 달렸습니다.");
+                _notificationService.NotifyUser(boardContentInfo);
 
                 // TODO : 대댓글시 댓글(parentId) 탐색 후 알림 전송
                 if (reqBoardCommentDTO.ParentCommentId != null)

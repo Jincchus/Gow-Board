@@ -124,8 +124,9 @@
                             <ul>
                                 <li class="dropdown">
                                     <a href="@Url.Action("MyProfile", "MyPage", new { area = "" })">
-                                        <span>
+                                        <span style="position: relative;">
                                             <i class="bi bi-chevron-down dropdown-indicator" id="notification-indicator"></i>
+                                            <span id="notification-badge" style="display: none;"></span>
                                             <span>@Session["Nickname"]님, 반갑습니다.</span>
                                         </span>
                                     </a>
@@ -268,19 +269,19 @@
 
         // 실시간 알림
         $(function () {
-            var memberId = '@Session["MemberId"]'; 
+            var memberId = '@Session["MemberId"]';
             var connection = $.hubConnection();
             connection.qs = { "memberId": memberId };
             var hub = connection.createHubProxy('notificationHub');
 
-            hub.on('receiveNotification', function (memberId, message) {
-                console.log("Received notification: " + message);
+            hub.on('receiveNotification', function (memberId, title, contentId) {
 
+                debugger
                 // 알림 표시
-                $('#notification-indicator').css('color', 'red');
+                $('#notification-badge').show();
 
                 // 드롭다운 메뉴에 새 알림 추가
-                var newNotification = $('<li><a href="#">' + message + '</a></li>');
+                var newNotification = $('<li><a href="/Board/DetailView/' + contentId +'">' + title +'에 댓글이 달렸습니다.' + '</a></li>');
                 $('#dropdown-menu').prepend(newNotification);
             });
 
