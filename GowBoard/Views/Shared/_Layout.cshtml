@@ -5,6 +5,27 @@
     var successMsg = ViewBag.SuccessMessage;
     var roleId = Session["RoleId"] as int?;
 }
+
+<style>
+    .floating-notification {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        display: none;
+        z-index: 1000;
+        max-width: 300px;
+    }
+
+    .notification-content {
+        font-size: 14px;
+    }
+</style>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -45,14 +66,43 @@
 
 
     <style>
-        .nav-item a.active {
-            font-weight: bold !important;
-            text-decoration: underline !important;
+        .floating-notification {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+            max-width: 300px;
+            max-height: 130px
         }
 
-        .nav-item :hover {
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
             font-weight: bold;
-            text-decoration: underline !important;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .notification-content {
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .notification-content:hover {
+            text-decoration: underline;
         }
     </style>
 
@@ -104,6 +154,15 @@
                     }
                 </ul>
             </nav><!-- .navbar -->
+
+            <!-- live alert -->
+            <div id="floating-notification" class="floating-notification">
+                <div class="notification-header">
+                    <span><i class="bi bi-bell-fill"></i> 알림</span>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="notification-content"></div>
+            </div>
 
             <div class="position-relative">
                 <div class="text-center">
@@ -266,9 +325,11 @@
 
             hub.on('receiveNotification', function (memberId, title, contentId) {
 
+                showFloatingNotification(title, contentId);
+
                 debugger
                 // 알림 표시
-                $('#notification-badge').show();
+                // $('#notification-badge').show();
 
                 // 드롭다운 메뉴에 새 알림 추가
                 var newNotification = $('<li><a href="/Board/DetailView/' + contentId +'">' + title +'에 댓글이 달렸습니다.' + '</a></li>');
@@ -284,6 +345,22 @@
                 .fail(function() {
                     console.log('Could not connect');
                 });
+
+
+            function showFloatingNotification(title, contentId) {
+                var notificationContent = "'" + title + "'" + '게시글에 댓글이 달렸습니다.';
+                $('.notification-content').html(notificationContent);
+                $('#floating-notification').fadeIn();
+
+                // 알림 클릭 시 해당 게시글로 이동
+                $('#floating-notification').off('click').on('click', function () {
+                    window.location.href = '/Board/DetailView/' + contentId;
+                });
+            }
+            $('.close-btn').on('click', function (e) {
+                e.stopPropagation();
+                $('#floating-notification').fadeOut();
+            });
         });
     });
 </script>
