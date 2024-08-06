@@ -6,26 +6,6 @@
     var roleId = Session["RoleId"] as int?;
 }
 
-<style>
-    .floating-notification {
-        position: fixed;
-        right: 20px;
-        bottom: 20px;
-        background-color: white;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        display: none;
-        z-index: 1000;
-        max-width: 300px;
-    }
-
-    .notification-content {
-        font-size: 14px;
-    }
-</style>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -220,7 +200,7 @@
 
     </header><!-- End Header -->
 
-    <div class="container body-content">
+    <div class="container body-content" style="min-height:1050px;">
         @RenderBody()
     </div>
     <!-- ======= Footer ======= -->
