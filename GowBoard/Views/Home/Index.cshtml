@@ -54,7 +54,7 @@
             <div class="row g-5">
 
                 <div class="col-lg-4">
-                    <h3 class="mb-5">가장 많이 본 공지사항</h3>
+                    <h3 class="mb-3">가장 많이 본 공지사항</h3>
                     @foreach (var topNotice in Model.TopViewNotice) {
                     <div class="post-entry-1 lg">
                         <a href="@Url.Action("DetailView", "Board", new { area = "", id = topNotice.BoardContentId })">
@@ -68,7 +68,7 @@
                             }
                         </a>
                         <div class="post-meta"><span class="date">@topNotice.Category</span> <span class="mx-1">&bullet;</span> <span>@topNotice.FormattedCreatedAt</span></div>
-                        <h2><a href="@Url.Action("DetailView", "Board", new { area = "", id = topNotice.BoardContentId })">@topNotice.Title</a></h2>
+                        <h3><a href="@Url.Action("DetailView", "Board", new { area = "", id = topNotice.BoardContentId })">@topNotice.Title</a></h3>
 
                     </div>
                     }
@@ -78,7 +78,7 @@
                 <div class="col-lg-8">
                     <div class="row g-5">
                         <div class="col-lg-4 border-start custom-border">
-                            <h3 class="mb-5">자유게시판 최신글</h3>
+                            <h3 class="mb-3">자유게시판 최신글</h3>
                             @foreach (var newBoard in Model.NewFreeBoards) {
                             <div class="post-entry-1">
                                 <a href="@Url.Action("DetailView", "Board", new { area = "", id = newBoard.BoardContentId })">
@@ -103,7 +103,7 @@
                             }
                         </div>
                         <div class="col-lg-4 border-start custom-border">
-                            <h3 class="mb-5">공지사항 최신글</h3>
+                            <h3 class="mb-3">공지사항 최신글</h3>
                             @foreach (var newNotice in Model.NewNotices) {
                             <div class="post-entry-1">
                                 <a href="@Url.Action("DetailView", "Board", new { area = "", id = newNotice.BoardContentId })">

@@ -28,16 +28,18 @@
             <div class="col-xl-4 col-md-6 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">
                     <div class="card-body">
-                        <div class="row no-gutters align-items-center">
+                        <div class="row no-gutters align-items-center ml-5">
+
+                            <div class="col-auto ">
+                                <i class="bi bi-people-fill" style="font-size:40px;"></i>
+                            </div>
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    총 유저수
+                                <div class="text-xs font-weight-bold text-uppercase mb-1">
+                                    <strong>총 유저수</strong>
                                 </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.MemberCount</div>
                             </div>
-                            <div class="col-auto">
-                                <i class="fas fa-users fa-2x text-gray-300"></i>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -48,14 +50,15 @@
                 <div class="card border-left-success shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
+
+                            <div class="col-auto">
+                                <i class="bi bi-clipboard" style="font-size:40px;"></i>
+                            </div>
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                    자유게시판 글 총 개수
+                                <div class="text-xs font-weight-bold text-uppercase mb-1">
+                                    <strong>자유게시판 글 총 개수</strong>
                                 </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.BoardCount</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="far fa-sticky-note fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
@@ -67,16 +70,17 @@
                 <div class="card border-left-info shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
+
+                            <div class="col-auto">
+                                <i class="bi bi-file-earmark-check-fill"  style="font-size:40px;"></i>
+                            </div>
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                    공지사항 글 총 개수
+                                <div class="text-xs font-weight-bold text-uppercase mb-1">
+                                    <strong>공지사항 글 총 개수</strong>
                                 </div>
                                 <div class="row no-gutters align-items-center">
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.NoticeCount</div>
                                 </div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
@@ -94,7 +98,7 @@
                 <div class="card shadow mb-4">
                     <!-- Card Header - Dropdown -->
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">일 별 유저 통계</h6>
+                        <strong class="m-0 font-weight-bold ">일자 별 유저 가입 통계</strong>
 
                     </div>
                     <!-- Card Body -->
@@ -112,7 +116,7 @@
                 <div class="card shadow mb-4">
                     <!-- Card Header - Dropdown -->
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">일 별 글 통계</h6>
+                        <strong class="m-0 font-weight-bold ">일자 별 글 작성 통계</strong>
                     </div>
                     <!-- Card Body -->
                     <div class="card-body ">

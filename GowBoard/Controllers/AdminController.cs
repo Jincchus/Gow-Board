@@ -61,6 +61,7 @@ namespace GowBoard.Controllers
 
             ViewBag.Member = member;
             ViewBag.Role = role;
+            ViewBag.CurrentPage = "Dashboard";
 
             return View(dashboardInfo);
         }
@@ -87,6 +88,7 @@ namespace GowBoard.Controllers
 
             ViewBag.Member = member;
             ViewBag.Role = role;
+            ViewBag.CurrentPage = "MemberList";
 
             return View(memberList);
         }

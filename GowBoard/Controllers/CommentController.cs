@@ -43,13 +43,6 @@ namespace GowBoard.Controllers
                 var boardContentInfo = _boardService.GetBoardContentById(reqBoardCommentDTO.BoardContentId);
                 _notificationService.NotifyUser(boardContentInfo);
 
-                // TODO : 대댓글시 댓글(parentId) 탐색 후 알림 전송
-                if (reqBoardCommentDTO.ParentCommentId != null)
-                {
-                    // var parentCommentWriter = await _commentService.GetCommentWriterByIdAsync(reqBoardCommentDTO.ParentCommentId.Value);
-                    // await _notificationService.SendNotificationAsync(parentCommentWriter, "새로운 답댓글이 달렸습니다.");
-                }
-
 
                 return Json(new { success = true, message = "댓글이 등록되었습니다." });
             }

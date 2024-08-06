@@ -78,6 +78,30 @@ namespace GowBoard.Models.Service
 
             return comments;
         }
+
+        public ResBoardCommentDTO GetCommentById(int commentId)
+        {
+            var comment = _context.BoardCommnets
+                .Include("Writer")
+                .FirstOrDefault(c => c.BoardCommentId == commentId);
+
+            if (comment == null)
+            {
+                return null;
+            }
+
+            return new ResBoardCommentDTO
+            {
+                BoardCommentId = comment.BoardCommentId,
+                BoardContentId = comment.BoardContentId,
+                Content = comment.Content,
+                //Writer = ,
+                CreatedAt = comment.CreatedAt,
+                ParentCommentId = comment.ParentCommentId,
+            };
+        }
+        
+
         public int GetTotalCommentCount(int boardContentId)
         {
             var parentComments = _context.BoardCommnets
@@ -145,6 +169,7 @@ namespace GowBoard.Models.Service
 
 
         }
+
 
     }
 

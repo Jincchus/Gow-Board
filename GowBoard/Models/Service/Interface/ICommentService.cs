@@ -17,5 +17,6 @@ namespace GowBoard.Models.Service.Interface
         void UpdateCommentById(ReqUpdateCommentDTO reqBoardCommentDTO);
         string getCommentWirterById(int commentId);
         void DeleteCommentById(int commentId);
+        ResBoardCommentDTO GetCommentById(int commentId);
     }
 }

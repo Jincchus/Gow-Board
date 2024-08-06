@@ -1363,3 +1363,17 @@ section {
     border-radius: 50%;
     display: none;
 }
+.nav-item a.active {
+    font-weight: bold !important;
+    text-decoration: underline !important;
+}
+
+.nav-item :hover {
+    font-weight: bold;
+    text-decoration: underline !important;
+}
+
+.nav-item.active a {
+    font-weight: bold;
+    color: black;
+}
