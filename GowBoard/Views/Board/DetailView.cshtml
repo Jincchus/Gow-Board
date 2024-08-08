@@ -18,18 +18,20 @@
 
             @if (Model.BoardContent.Category == "Board")
             {
-                <div class="mb-2">
+
+                <div class="d-flex justify-content-end mt-3">
                     <a href="@Url.Action("List", "Board", new { area = "", category ="Board" })"> <i class="bi bi-list"></i> 목록으로</a>
                 </div>
             }
             else if (Model.BoardContent.Category == "Notice")
             {
-                <div class="mb-2">
-                    <a href="@Url.Action("List", "Board", new { area = "", category ="Notice" })"> < 목록으로</a>
+
+                <div class="d-flex justify-content-end mb-3">
+                    <a href="@Url.Action("List", "Board", new { area = "", category ="Notice" })"> <i class="bi bi-list"></i> 목록으로</a>
                 </div>
             }
 
-            <div class="container card" style="min-height:600px; padding-left:80px; padding-right:80px;">
+            <div class="container card mt-2" style="min-height:600px; padding-left:80px; padding-right:80px;">
                 <div class="row">
                     <div class=" post-content" data-aos="fade-up">
 
@@ -89,10 +91,6 @@
                         </div><!-- End Single </P>ost Content -->
                     </div>
                 </div>
-            </div>
-
-            <div class="d-flex justify-content-end mt-3">
-                <button type="button" class="btn btn-secondary">목록으로</button>
             </div>
 
 

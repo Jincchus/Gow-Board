@@ -162,22 +162,7 @@
                 <div class="row">
 
                     <!-- ======= My Page Sidebar ======= -->
-                    <div class="col-md-3">
-                        <div class="aside-block">
-                            <h3 class="aside-title">My Page</h3>
-                            <span>
-                                @member.Nickname
-                                <span class="">(관리자)</span>
-                            </span>
-                            <div>@member.Email</div>
-
-                            <br>
-
-                            <div class="row">
-                                <a href="@Url.Action("Logout", "Member", new { area = "" })" style="font-size:x-large;">Logout  <i class="bi bi-chevron-right"></i></a>
-
-                            </div>
-                        </div><!-- End Video -->
+                    <div class="col-md-1" style="width:14%;">
 
                         <div class="aside-block" style="margin-bottom: 300px;">
                             <h3 class="aside-title">Categories</h3>
@@ -199,15 +184,10 @@
                             </ul>
                         </div><!-- End Categories -->
 
-                        <div class="aside-block">
-                            <h3 class="aside-title"></h3>
-                            <h4 style="font-weight: bold; margin-left: 20px;"><a href="@Url.Action("Withdrawal", "MyPage", new { area = "" })"><i class="bi bi-box-arrow-right fs-5"></i>회원탈퇴</a></h4>
-                        </div><!-- End Tags -->
-
                     </div>
                     <!-- My Page Sidebar End-->
 
-                    <div class=col-md-9 post-content" data-aos="fade-up" id="sidebar-after">
+                    <div class=col-md-10 post-content" data-aos="fade-up" id="sidebar-after" style="width:86%;">
                         @RenderBody()
                     </div>
 
