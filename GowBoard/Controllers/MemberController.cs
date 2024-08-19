@@ -1,8 +1,5 @@
-﻿using GowBoard.Models.Context;
-using GowBoard.Models.DTO.RequestDTO;
-using GowBoard.Models.Service;
+﻿using GowBoard.Models.DTO.RequestDTO;
 using GowBoard.Models.Service.Interface;
-using System;
 using System.Web.Mvc;
 
 namespace GowBoard.Controllers
@@ -115,7 +112,7 @@ namespace GowBoard.Controllers
                     ViewBag.ErrorMessage = "입력하신 아이디 혹은 비밀번호가 올바르지 않습니다";
                 }
 
-                    return View("Login", loginDto);
+                return View("Login", loginDto);
             }
 
             Session["MemberId"] = loginResult.Member.MemberId;

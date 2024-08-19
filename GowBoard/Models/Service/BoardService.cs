@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
-using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -200,9 +199,7 @@ namespace GowBoard.Models.Service
                 }
             }
 
-            query = query
-                .OrderByDescending(bc => bc.BoardContentId)
-                .ThenByDescending(bc => bc.CreatedAt);
+            query = query.OrderByDescending(bc => bc.CreatedAt);
 
             var totalCount = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalCount / (double)searchBoardDTO.PageSize);

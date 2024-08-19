@@ -53,75 +53,79 @@
         <div class="container" data-aos="fade-up">
             <div class="row g-5">
 
-                <div class="col-lg-4">
-                    <h3 class="mb-3">가장 많이 본 공지사항</h3>
-                    @foreach (var topNotice in Model.TopViewNotice) {
-                    <div class="post-entry-1 lg">
-                        <a href="@Url.Action("DetailView", "Board", new { area = "", id = topNotice.BoardContentId })">
-                            @if (topNotice.Files != null)
-                            {
-                                <img src="@topNotice.Files.ThumbUrl" alt="" class="img-fluid top-view-notice">
-                            }
-                            else
-                            {
-                                <img src="~/Content/img/main_basic_picture.PNG"  alt="" class="img-fluid top-view-notice">
-                            }
-                        </a>
-                        <div class="post-meta"><span class="date">@topNotice.Category</span> <span class="mx-1">&bullet;</span> <span>@topNotice.FormattedCreatedAt</span></div>
-                        <h3><a href="@Url.Action("DetailView", "Board", new { area = "", id = topNotice.BoardContentId })">@topNotice.Title</a></h3>
-
-                    </div>
+                <!--
+        <div class="col-lg-4">
+            <h3 class="mb-3">가장 많이 본 공지사항</h3>
+            @foreach (var topNotice in Model.TopViewNotice) {
+            <div class="post-entry-1 lg">
+                <a href="@Url.Action("DetailView", "Board", new { area = "", id = topNotice.BoardContentId })">
+                    @if (topNotice.Files != null)
+                    {
+                        <img src="@topNotice.Files.ThumbUrl" alt="" class="img-fluid top-view-notice">
                     }
+                    else
+                    {
+                        <img src="~/Content/img/main_basic_picture.PNG"  alt="" class="img-fluid top-view-notice">
+                    }
+                </a>
+                <div class="post-meta"><span class="date">@topNotice.Category</span> <span class="mx-1">&bullet;</span> <span>@topNotice.FormattedCreatedAt</span></div>
+                <h3><a href="@Url.Action("DetailView", "Board", new { area = "", id = topNotice.BoardContentId })">@topNotice.Title</a></h3>
 
-                </div>
+            </div>
+            }
 
-                <div class="col-lg-8">
+        </div>
+        -->
+
+                <div class="col-lg-12">
                     <div class="row g-5">
                         <div class="col-lg-4 border-start custom-border">
-                            <h3 class="mb-3">자유게시판 최신글</h3>
-                            @foreach (var newBoard in Model.NewFreeBoards) {
-                            <div class="post-entry-1">
-                                <a href="@Url.Action("DetailView", "Board", new { area = "", id = newBoard.BoardContentId })">
-                                    @if (newBoard.Files != null)
-                                    {
-                                        <img src="@newBoard.Files.ThumbUrl" alt="" class="img-fluid new-board">
-                                    }
-                                    else
-                                    {
-                                        <img src="~/Content/img/main_basic_picture.PNG" alt="" class="img-fluid new-board">
-                                    }
-                                </a>
-                                <div class="post-meta"><span class="date">@newBoard.Category</span> <span class="mx-1">&bullet;</span> <span>@newBoard.FormattedCreatedAt</span></div>
-
-                                <div class="d-flex align-items-center author">
-                                    <div class="name">
-                                        <h3 class="m-0 p-0">@newBoard.Writer.Nickname</h3>
-                                    </div>
-                                </div>
-                                <h2><a href="@Url.Action("DetailView", "Board", new { area = "", id = newBoard.BoardContentId })">@newBoard.Title</a></h2>
-                            </div>
-                            }
-                        </div>
-                        <div class="col-lg-4 border-start custom-border">
                             <h3 class="mb-3">공지사항 최신글</h3>
-                            @foreach (var newNotice in Model.NewNotices) {
-                            <div class="post-entry-1">
-                                <a href="@Url.Action("DetailView", "Board", new { area = "", id = newNotice.BoardContentId })">
-                                    @if (newNotice.Files != null)
-                                    {
-                                        <img src="@newNotice.Files.ThumbUrl" alt="" class="img-fluid new-board">
-                                    }
-                                    else
-                                    {
-                                        <img src="~/Content/img/main_basic_picture.PNG" alt="" class="img-fluid new-board">
-                                    }
-                                </a>
-                                <div class="post-meta"><span class="date">@newNotice.Category</span> <span class="mx-1">&bullet;</span> <span>@newNotice.FormattedCreatedAt</span></div>
-                                <h2><a href="@Url.Action("DetailView", "Board", new { area = "", id = newNotice.BoardContentId })">@newNotice.Title</a></h2>
-                            </div>
+                            @foreach (var newNotice in Model.NewNotices)
+                            {
+                                <div class="post-entry-1">
+                                    <a href="@Url.Action("DetailView", "Board", new { area = "", id = newNotice.BoardContentId })">
+                                        @if (newNotice.Files != null)
+                                        {
+                                            <img src="@newNotice.Files.ThumbUrl" alt="" class="img-fluid new-board">
+                                        }
+                                        else
+                                        {
+                                            <img src="~/Content/img/main_basic_picture.PNG" alt="" class="img-fluid new-board">
+                                        }
+                                    </a>
+                                    <div class="post-meta"><span class="date">@newNotice.Category</span> <span class="mx-1">&bullet;</span> <span>@newNotice.FormattedCreatedAt</span></div>
+                                    <h2><a href="@Url.Action("DetailView", "Board", new { area = "", id = newNotice.BoardContentId })">@newNotice.Title</a></h2>
+                                </div>
                             }
                         </div>
 
+                        <div class="col-lg-4 border-start custom-border">
+                            <h3 class="mb-3">자유게시판 최신글</h3>
+                            @foreach (var newBoard in Model.NewFreeBoards)
+                            {
+                                <div class="post-entry-1">
+                                    <a href="@Url.Action("DetailView", "Board", new { area = "", id = newBoard.BoardContentId })">
+                                        @if (newBoard.Files != null)
+                                        {
+                                            <img src="@newBoard.Files.ThumbUrl" alt="" class="img-fluid new-board">
+                                        }
+                                        else
+                                        {
+                                            <img src="~/Content/img/main_basic_picture.PNG" alt="" class="img-fluid new-board">
+                                        }
+                                    </a>
+                                    <div class="post-meta"><span class="date">@newBoard.Category</span> <span class="mx-1">&bullet;</span> <span>@newBoard.FormattedCreatedAt</span></div>
+
+                                    <div class="d-flex align-items-center author">
+                                        <div class="name">
+                                            <h3 class="m-0 p-0">@newBoard.Writer.Nickname</h3>
+                                        </div>
+                                    </div>
+                                    <h2><a href="@Url.Action("DetailView", "Board", new { area = "", id = newBoard.BoardContentId })">@newBoard.Title</a></h2>
+                                </div>
+                            }
+                        </div>
                         <!-- Trending Section -->
                         <div class="col-lg-4">
 
@@ -129,14 +133,15 @@
                                 <h3>자유게시판 Top5</h3>
                                 <ul class="trending-post">
                                     @{ int number = 1; }
-                                    @foreach(var topPost in Model.TopFiveBoards) {
-                                    <li>
-                                        <a href="@Url.Action("DetailView", "Board", new { area = "", id = topPost.BoardContentId })">
-                                            <span class="number">@number</span> <!-- 해당 넘버 1~5까지 순서대로 되도록 표시-->
-                                            <h3>@topPost.Title</h3>
-                                            <span class="author">@topPost.Writer.Nickname</span>
-                                        </a>
-                                    </li>
+                                    @foreach (var topPost in Model.TopFiveBoards)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("DetailView", "Board", new { area = "", id = topPost.BoardContentId })">
+                                                <span class="number">@number</span> <!-- 해당 넘버 1~5까지 순서대로 되도록 표시-->
+                                                <h3>@topPost.Title</h3>
+                                                <span class="author">@topPost.Writer.Nickname</span>
+                                            </a>
+                                        </li>
                                         number++;
                                     }
                                 </ul>
