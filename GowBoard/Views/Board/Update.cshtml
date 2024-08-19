@@ -294,27 +294,32 @@
                     document.querySelector('#Title').value = data.title;
                     editor.html.set(data.content);
                     document.querySelector('#Category').value = data.category;
-                    boardFileIds = data.boardFiles.map(file => !file.isEditorImage) || [];
+
+                    if (Array.isArray(data.boardFiles)) {
+                        boardFileIds = data.boardFiles.filter(file => !file.isEditorImage).map(file => file.boardFileId) || [];
+
+                        if (fileList) {
+                            fileList.innerHTML = '';
+                            data.boardFiles.forEach(file => {
+                                if (!file.isEditorImage) {
+                                    const fileItem = document.createElement('div');
+                                    fileItem.className = 'file-item';
+                                    fileItem.innerHTML = `
+                                <span>${file.name}</span> 
+                                <button type="button" class="remove-file bi bi-file-earmark-x" data-id="${file.boardFileId}" ></button>
+                            `;
+                                    fileList.appendChild(fileItem);
+                                }
+                            });
+                        }
+                    } else {
+                        console.warn('파일 정보를 불러 올 수 없습니다.');
+                    }
+
 
                     const categoryTitle = document.querySelector('h3');
                     categoryTitle.textContent = data.category === 'Notice' ? '공지사항' : '자유 게시판';
-
                     updateNavigation(data.category);
-
-                    if (fileList) {
-                        fileList.innerHTML = '';
-                        data.boardFiles.forEach(file => {
-                            if (!file.isEditorImage) {
-                                const fileItem = document.createElement('div');
-                                fileItem.className = 'file-item';
-                                fileItem.innerHTML = `
-                                <span>${file.name}</span> 
-                                <button type="button" class="remove-file bi bi-file-earmark-x" data-id="${result.boardFileId}" ></button>
-                            `;
-                                fileList.appendChild(fileItem);
-                            }
-                        });
-                    }
                 } else {
                     alert(data.message);
                 }

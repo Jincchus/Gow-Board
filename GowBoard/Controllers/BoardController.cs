@@ -294,16 +294,18 @@ namespace GowBoard.Controllers
             {
                 if (roleId == 2 || boardContent.Writer.MemberId == memberId)
                 {
-                    var attachments = boardContent.BoardFiles.Where(f => !f.IsEditorImage)
-                                                  .Select(f => new { id = f.BoardFileId, name = f.FileName });
-
                     return Json(new
                     {
                         success = true,
                         title = boardContent.Title,
                         content = boardContent.Content,
                         category = boardContent.Category,
-                        boardFiles = attachments
+                        boardFiles = boardContent.BoardFiles.Select(f => new
+                        {
+                            boardFileId = f.BoardFileId,
+                            name = f.FileName,
+                            isEditorImage = f.IsEditorImage
+                        })
                     }, JsonRequestBehavior.AllowGet);
                 }
                 return Json(new { success = false, message = "해당 글에 관한 권한이 없습니다." }, JsonRequestBehavior.AllowGet);

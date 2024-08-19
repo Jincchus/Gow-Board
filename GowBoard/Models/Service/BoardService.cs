@@ -201,8 +201,8 @@ namespace GowBoard.Models.Service
             }
 
             query = query
-                .OrderByDescending(bc => bc.CreatedAt)
-                .ThenByDescending(bc => bc.BoardContentId);
+                .OrderByDescending(bc => bc.BoardContentId)
+                .ThenByDescending(bc => bc.CreatedAt);
 
             var totalCount = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalCount / (double)searchBoardDTO.PageSize);

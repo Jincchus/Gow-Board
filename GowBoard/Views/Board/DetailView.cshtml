@@ -191,15 +191,14 @@
                                                         <div class="reply-meta d-flex align-items-baseline justify-content-between">
                                                             <div class="d-flex align-items-baseline">
                                                                 <h6 class="mb-0 me-2">@reply.Writer.Nickname</h6>
-                                                                @if (comment.Writer.MemberId == Model.BoardContent.Writer.MemberId)
+                                                                @if (reply.Writer.MemberId == Model.BoardContent.Writer.MemberId)
                                                                 {
                                                                     <span class="text-muted">· writer</span>
                                                                 }
                                                             </div>
                                                             <div class="d-flex align-items-center ms-auto">
-
                                                                 @if (Model.MemberInfoOrRole.Member != null &&
-                                                                    (Model.MemberInfoOrRole.Member.MemberId == comment.Writer.MemberId ||
+                                                                    (Model.MemberInfoOrRole.Member.MemberId == reply.Writer.MemberId ||
                                                                     (Model.MemberInfoOrRole.Role != null && Model.MemberInfoOrRole.Role.RoleId == 2)))
                                                                 {
                                                                     <a href="#" class="update-comment-tag" data-comment-id="@reply.BoardCommentId" data-writer-id="@reply.Writer.MemberId"><span class="text-muted">수정</span></a>
@@ -215,7 +214,6 @@
                                                         <hr>
                                                     </div>
                                                 </div>
-
                                             }
                                         </div>
                                     }
