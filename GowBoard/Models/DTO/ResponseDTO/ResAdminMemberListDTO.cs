@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace GowBoard.Models.DTO.ResponseDTO
 {
@@ -10,7 +9,7 @@ namespace GowBoard.Models.DTO.ResponseDTO
         public string Email { get; set; }
         public string Nickname { get; set; }
         public string Phone { get; set; }
-        public bool DeleteYn { get; set; } 
+        public bool DeleteYn { get; set; }
         public DateTime? DeletedAt { get; set; }
         public string RoleName { get; set; }
 

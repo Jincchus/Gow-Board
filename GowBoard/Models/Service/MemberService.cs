@@ -344,6 +344,35 @@ namespace GowBoard.Models.Service
             return (dates, counts);
         }
 
+        public async Task<List<ResAdminMemberListDTO>> GetMemberList(int page, int pageSize)
+        {
+            var query = from m in _context.Members
+                        join mrm in _context.MemberRoleMaps on m.MemberId equals mrm.MemberId
+                        join r in _context.Roles on mrm.RoleId equals r.RoleId
+                        select new ResAdminMemberListDTO
+                        {
+                            MemberId = m.MemberId,
+                            Name = m.Name,
+                            Email = m.Email,
+                            Nickname = m.Nickname,
+                            Phone = m.Phone,
+                            DeleteYn = m.DeleteYn,
+                            DeletedAt = m.DeletedAt,
+                            RoleName = r.RoleName,
+                        };
+
+            return await query
+                         .OrderBy(m => m.MemberId)
+                         .Skip((page - 1) * pageSize)
+                         .Take(pageSize)
+                         .ToListAsync();
+        }
+
+        public async Task<int> GetTotalMemberCount()
+        {
+            return await _context.Members.CountAsync();
+        }
+        /*
         public async Task<List<ResAdminMemberListDTO>> GetMemberList()
         {
             var query = from m in _context.Members
@@ -362,7 +391,7 @@ namespace GowBoard.Models.Service
                         };
 
             return await query.ToListAsync();
-        }
+        }*/
     }
 
 }

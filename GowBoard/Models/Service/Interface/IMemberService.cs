@@ -31,6 +31,7 @@ namespace GowBoard.Models.Service.Interface
         Role GetRoleByMemberId(string memberId);
         Task<int> GetTotalMemberCountAsync();
         Task<(List<DateTime>, List<int>)> GetDailyMemberCountAsync(int days);
-        Task<List<ResAdminMemberListDTO>> GetMemberList();
+        Task<List<ResAdminMemberListDTO>> GetMemberList(int page, int pageSize);
+        Task<int> GetTotalMemberCount();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using GowBoard.Models.DTO.ResponseDTO;
 using GowBoard.Models.Service.Interface;
+using System;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -66,7 +67,8 @@ namespace GowBoard.Controllers
             return View(dashboardInfo);
         }
 
-        public async Task<ActionResult> MemberList()
+        // 관리자 멤버 리스트(페이징)
+        public async Task<ActionResult> MemberList(int page = 1, int pageSize = 15)
         {
             if (Session["MemberId"] == null)
             {
@@ -84,13 +86,47 @@ namespace GowBoard.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            var memberList = await _memberService.GetMemberList();
+            var totalMembers = await _memberService.GetTotalMemberCount();
+            var memberList = await _memberService.GetMemberList(page, pageSize);
+
+            var totalPages = (int)Math.Ceiling((double)totalMembers / pageSize);
 
             ViewBag.Member = member;
             ViewBag.Role = role;
             ViewBag.CurrentPage = "MemberList";
+            ViewBag.CurrentPageNumber = page;
+            ViewBag.TotalPages = totalPages;
 
             return View(memberList);
         }
+            /*
+            // GET: Admin/MemberList
+            // 관리자 유저 리스트
+            public async Task<ActionResult> MemberList()
+            {
+                if (Session["MemberId"] == null)
+                {
+                    TempData["ErrorMessage"] = "로그인한 회원만 이용 가능한 페이지입니다.";
+                    return RedirectToAction("Login", "Member");
+                }
+
+                string memberId = Session["MemberId"].ToString();
+                var member = _memberService.GetMemberById(memberId);
+                var role = _memberService.GetRoleByMemberId(memberId);
+
+                if (role.RoleId != 2)
+                {
+                    TempData["ErrorMessage"] = "해당 페이지에 관한 권한이 없습니다.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                var memberList = await _memberService.GetMemberList();
+
+                ViewBag.Member = member;
+                ViewBag.Role = role;
+                ViewBag.CurrentPage = "MemberList";
+
+                return View(memberList);
+            }*/
     }
 }

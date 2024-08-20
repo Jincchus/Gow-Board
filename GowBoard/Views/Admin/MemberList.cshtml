@@ -2,6 +2,9 @@
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewBag.Title = "Admin-MemberList Page";
+    int currentPage = ViewBag.CurrentPageNumber;
+    int totalPages = ViewBag.TotalPages;
+
 }
 <div class="container">
     <!-- Begin Page Content -->
@@ -38,7 +41,8 @@
                             @if (member.Phone == null)
                             {
                                 <td> - </td>
-                            } else
+                            }
+                            else
                             {
                                 <td>@member.Phone</td>
                             }
@@ -47,14 +51,16 @@
                             {
                                 <td>Y</td>
 
-                            } else
+                            }
+                            else
                             {
                                 <td> - </td>
                             }
                             @if (member.DeleteYn)
                             {
                                 <td>@member.FormatterDates</td>
-                            } else
+                            }
+                            else
                             {
                                 <td> - </td>
                             }
@@ -64,6 +70,32 @@
                 </tbody>
             </table>
 
+            <!-- Pagination -->
+            <div class="row gy-4">
+                <div class="text-center py-4">
+                    <div class="custom-pagination">
+                        @if (currentPage > 10)
+                        {
+                            <a href="@Url.Action("MemberList", new { page = (currentPage - 10) })" class="prev-page">&lt; </a>
+                        }
+
+                        @{
+                            int startPage = ((currentPage - 1) / 10) * 10 + 1;
+                            int endPage = Math.Min(totalPages, startPage + 9);
+                        }
+
+                        @for (int i = startPage; i <= endPage; i++)
+                        {
+                            <a href="@Url.Action("MemberList", new { page = i })" @(currentPage == i ? "class=active" : "")>@i</a>
+                        }
+
+                        @if (endPage < totalPages)
+                        {
+                            <a href="@Url.Action("MemberList", new { page = (startPage + 10) })" class="next-page"> &gt;</a>
+                        }
+                    </div>
+                </div>
+            </div>
 
         </div>
 
