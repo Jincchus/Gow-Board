@@ -1,3 +1,19 @@
 {
-  "dependencies": {}
+  "dependencies": {
+    "mssql1": {
+      "serviceConnectorResourceId": "",
+      "secretStore": "AzureAppSettings",
+      "type": "mssql.onprem",
+      "connectionId": "ConnectionStrings:gow-board.database.windows.net",
+      "dynamicId": null
+    },
+    "storage1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/GowBoard20240725110832/providers/Microsoft.ServiceLinker/linkers/bacchus2_6754F2CB20, /subscriptions/75b363f5-9110-42f1-b153-2e10dee10c72/resourcegroups/Personal/providers/Microsoft.Web/sites/GowBoard20240725110832/providers/Microsoft.ServiceLinker/linkers/bacchus2_C70A4989E1",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/bacchus2",
+      "type": "storage.azure",
+      "connectionId": "bacchus2",
+      "dynamicId": null
+    }
+  }
 }
